@@ -1,0 +1,14 @@
+{
+  "local_llm_patterns": [
+    "explique", "definiti", "comment fonctionne",
+    "c'est quoi", "cest quoi", "qu'est ce", "quest ce",
+    "difference entre", "exemple de", "kesako", "resum", "tradui",
+    "c koi", "ckoi", "qu est ce", "pourquoi", "comment ca",
+    "a quoi sert", "sert a quoi", "keskeske", "kekseke", "c quoi",
+    "kezako", "ca sert", "utilite", "pour quoi", "a koi", "koi sert",
+    "pk", "pkoi", "sert a koi",
+    "what is", "how does", "explain", "difference between", "example of",
+    "what are", "why", "how to", "what does", "what do"
+  ],
+  "action_embed_threshold": 0.72
+}

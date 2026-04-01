@@ -1,0 +1,96 @@
+{"ts": "2026-03-31T15:17:57", "route": "claude", "raison": "défaut", "prompt": "ok fait le flow complet"}
+{"ts": "2026-03-31T15:19:29", "route": "claude", "raison": "défaut", "prompt": "Le mtime > 5min comme critère de stale — si tu fais une longue session sans toucher aux fichiers, ça va régénérer le con"}
+{"ts": "2026-03-31T15:20:10", "route": "claude", "raison": "identifiant projet: hooks", "prompt": "<ide_opened_file>The user opened the file /home/msalaun/fanlab/goniometrie/reduc-token/hooks/auto_context.py in the IDE."}
+{"ts": "2026-03-31T16:15:31", "route": "claude", "raison": "chemin/extension détecté", "prompt": "<ide_opened_file>The user opened the file /home/msalaun/fanlab/goniometrie/.mcp.json in the IDE. This may or may not be "}
+{"ts": "2026-03-31T16:16:00", "route": "mistral", "raison": "pattern question générale", "prompt": "cest quoi fft ?"}
+{"ts": "2026-03-31T16:16:36", "route": "claude", "raison": "défaut", "prompt": "tu utilises bien la pip line qui passe par mon mcp et ia local pour repondre N"}
+{"ts": "2026-03-31T16:17:12", "route": "claude", "raison": "identifiant projet: auto_context", "prompt": "pourtant dans ~/.claude$ cat settings.json \n{\n  \"enabledPlugins\": {\n    \"clangd-lsp@claude-plugins-official\": true\n  },\n"}
+{"ts": "2026-03-31T16:19:16", "route": "claude", "raison": "identifiant projet: session_summary", "prompt": "fait moi le flow de reduc token entier avec cat settings.json \n{\n  \"enabledPlugins\": {\n    \"clangd-lsp@claude-plugins-of"}
+{"ts": "2026-03-31T16:20:43", "route": "mistral", "raison": "pattern question générale", "prompt": "regarde pourquoi ça a pas fonctionné"}
+{"ts": "2026-03-31T16:22:30", "route": "claude", "raison": "défaut", "prompt": "fait le"}
+{"ts": "2026-03-31T16:23:12", "route": "claude", "raison": "chemin/extension détecté", "prompt": "<ide_opened_file>The user opened the file /home/msalaun/fanlab/goniometrie/.mcp.json in the IDE. This may or may not be "}
+{"ts": "2026-03-31T16:24:09", "route": "mistral", "raison": "pattern question générale", "prompt": "c'est quoi la FFT", "mistral_model": "qwen2.5:3b", "mistral_cached": false, "mistral_tokens": 348}
+{"ts": "2026-03-31T16:25:21", "route": "mistral", "raison": "pattern question générale", "prompt": "pourquoi pour repondre tu uses pas mon llm local :", "mistral_model": "qwen2.5:3b", "mistral_cached": false, "mistral_tokens": 448}
+{"ts": "2026-03-31T16:26:51", "route": "claude", "raison": "défaut", "prompt": "et si je te demande de liste mais tools"}
+{"ts": "2026-04-01T08:57:18", "route": "claude", "raison": "défaut", "prompt": "et si je te demande de liste mais tools"}
+{"ts": "2026-04-01T08:57:23", "route": "claude", "raison": "défaut", "prompt": "et si je te demande de liste mes tools"}
+{"ts": "2026-04-01T08:57:46", "route": "claude", "raison": "défaut", "prompt": "use mcp__reduc-token__session_summary"}
+{"ts": "2026-04-01T08:59:15", "route": "claude", "raison": "défaut", "prompt": "ajoute un message dans la reponse quand repondu avec mes tools et mon ia local ou toi"}
+{"ts": "2026-04-01T09:01:46", "route": "mistral", "raison": "pattern question générale", "prompt": "explique le flow entier de reduc-token", "mistral_model": "qwen2.5:3b", "mistral_cached": false, "mistral_tokens": 817}
+{"ts": "2026-04-01T09:04:08", "route": "claude", "raison": "identifiant projet: hooks", "prompt": "<ide_selection>The user selected the lines 15 to 15 from /home/msalaun/fanlab/goniometrie/front-goniometrie/package.json"}
+{"ts": "2026-04-01T09:06:36", "route": "claude", "raison": "défaut", "prompt": "test$"}
+{"ts": "2026-04-01T09:07:07", "route": "claude", "raison": "défaut", "prompt": "à quoi sert fft"}
+{"ts": "2026-04-01T09:07:26", "route": "claude", "raison": "identifiant projet: signal_processor", "prompt": "à quoi sert fft\nRouté vers claude car fft est dans project_ids (nom de fonction compute_fft dans signal_processor.py) — "}
+{"ts": "2026-04-01T09:08:20", "route": "claude", "raison": "défaut", "prompt": "à quoi sert fft"}
+{"ts": "2026-04-01T09:09:27", "route": "claude", "raison": "défaut", "prompt": "à quoi sert fft"}
+{"ts": "2026-04-01T09:20:31", "route": "claude", "raison": "chemin/extension détecté", "prompt": "<ide_selection>The user selected the lines 393 to 393 from /home/msalaun/fanlab/goniometrie/reduc-token/mcp/mcp_server.p"}
+{"ts": "2026-04-01T09:21:13", "route": "mistral", "raison": "pattern question générale", "prompt": "à quoi sert fft", "mistral_model": "qwen2.5:3b", "mistral_cached": false, "mistral_tokens": 391}
+{"ts": "2026-04-01T09:23:33", "route": "claude", "raison": "chemin/extension détecté", "prompt": "<ide_selection>The user selected the lines 7 to 7 from /home/msalaun/fanlab/goniometrie/api-goniometrie/app/routers/freq"}
+{"ts": "2026-04-01T09:24:37", "route": "claude", "raison": "chemin/extension détecté", "prompt": "<ide_opened_file>The user opened the file /home/msalaun/fanlab/goniometrie/reduc-token/context/project_map.json in the I"}
+{"ts": "2026-04-01T09:25:25", "route": "claude", "raison": "chemin/extension détecté", "prompt": "<ide_opened_file>The user opened the file /home/msalaun/fanlab/goniometrie/reduc-token/mcp/mcp_server.py in the IDE. Thi"}
+{"ts": "2026-04-01T09:26:30", "route": "claude", "raison": "chemin/extension détecté", "prompt": "ok et session context tu le use dans tes reponses ?  Route \"claude\" :\n             ├─ Context périmé ? (git diff non vid"}
+{"ts": "2026-04-01T09:27:43", "route": "claude", "raison": "chemin/extension détecté", "prompt": "<ide_opened_file>The user opened the file /home/msalaun/fanlab/goniometrie/reduc-token/context/project_map.json in the I"}
+{"ts": "2026-04-01T09:30:50", "route": "claude", "raison": "chemin/extension détecté", "prompt": "on pourrait faire par exemple tu veux du context sur un fichier a la place de le read pour savoir si c'est celui-ci que "}
+{"ts": "2026-04-01T09:31:56", "route": "claude", "raison": "chemin/extension détecté", "prompt": "les infos de claude.md c'est natif ou c'est mon reduc-token qui le remplie ?"}
+{"ts": "2026-04-01T09:32:23", "route": "claude", "raison": "chemin/extension détecté", "prompt": "L'amélioration utile et simple : enrichir CLAUDE.md avec les numéros de ligne pour les fonctions des gros fichiers :\n\nfa"}
+{"ts": "2026-04-01T09:33:43", "route": "claude", "raison": "chemin/extension détecté", "prompt": "<ide_opened_file>The user opened the file /home/msalaun/fanlab/goniometrie/CLAUDE.md in the IDE. This may or may not be "}
+{"ts": "2026-04-01T09:34:20", "route": "claude", "raison": "chemin/extension détecté", "prompt": "<ide_selection>The user selected the lines 50 to 50 from /home/msalaun/fanlab/goniometrie/api-goniometrie/app/crud/freq_"}
+{"ts": "2026-04-01T09:34:33", "route": "claude", "raison": "chemin/extension détecté", "prompt": "<ide_selection>The user selected the lines 43 to 43 from /home/msalaun/fanlab/goniometrie/api-goniometrie/app/crud/freq_"}
+{"ts": "2026-04-01T09:34:42", "route": "claude", "raison": "identifiant projet: get_freq_locks", "prompt": "get_freq_locks ajoute juste un commentaire test"}
+{"ts": "2026-04-01T09:35:01", "route": "claude", "raison": "chemin/extension détecté", "prompt": "<ide_opened_file>The user opened the file /home/msalaun/fanlab/goniometrie/api-goniometrie/app/crud/freq_lock.py in the "}
+{"ts": "2026-04-01T09:35:38", "route": "claude", "raison": "défaut", "prompt": "sans perdre de context du tout dcp"}
+{"ts": "2026-04-01T09:36:38", "route": "mistral", "raison": "pattern question générale", "prompt": "explique fft", "mistral_model": "qwen2.5:3b", "mistral_cached": false, "mistral_tokens": 357}
+{"ts": "2026-04-01T09:37:41", "route": "claude", "raison": "chemin/extension détecté", "prompt": "<ide_opened_file>The user opened the file /home/msalaun/fanlab/goniometrie/.mcp.json in the IDE. This may or may not be "}
+{"ts": "2026-04-01T09:37:46", "route": "mistral", "raison": "pattern question générale", "prompt": "explique fft", "mistral_model": "qwen2.5:3b", "mistral_cached": true, "mistral_tokens": 357}
+{"ts": "2026-04-01T09:40:44", "route": "mistral", "raison": "pattern question générale", "prompt": "regarde ce qu'il s'est passéexplique fft\nLa FFT (Fast Fourier Transform) transforme un signal temporel en espace fréquen", "mistral_model": "qwen2.5:3b", "mistral_cached": false, "mistral_tokens": 1077}
+{"ts": "2026-04-01T09:41:03", "route": "mistral", "raison": "pattern question générale", "prompt": "regarde ce qu'il s'est passéexplique fft\nLa FFT (Fast Fourier Transform) transforme un signal temporel en espace fréquen", "mistral_model": "qwen2.5:3b", "mistral_cached": true, "mistral_tokens": 1077}
+{"ts": "2026-04-01T09:42:35", "route": "claude", "raison": "chemin/extension détecté", "prompt": "Ce qui s'est passé :\n\n1er \"explique fefe fft \" → Ollama appelé, 357 tokens, réponse en espagnol (qwen hallucine la langu"}
+{"ts": "2026-04-01T09:45:44", "route": "claude", "raison": "défaut", "prompt": "comment normaliser les questions mieux que ça, parce que j'ai envie de rendre generique ce projet de reduc token dans la"}
+{"ts": "2026-04-01T09:46:58", "route": "claude", "raison": "défaut", "prompt": "carrement mais perte de rapidité du au llm local"}
+{"ts": "2026-04-01T09:48:19", "route": "claude", "raison": "défaut", "prompt": "l'embedding si je fais faute orthographe, autre formulation"}
+{"ts": "2026-04-01T09:49:02", "route": "claude", "raison": "défaut", "prompt": "fait ça Option 2 : Cache à deux niveaux\n\n\nPrompt → hash exact → Redis hit ? → réponse immédiate (0ms)\n                  "}
+{"ts": "2026-04-01T09:52:35", "route": "claude", "raison": "chemin/extension détecté", "prompt": "<ide_opened_file>The user opened the file /home/msalaun/fanlab/goniometrie/reduc-token/hooks/auto_context.py in the IDE."}
+{"ts": "2026-04-01T09:53:31", "route": "claude", "raison": "défaut", "prompt": "{\"status\":\"pulling 970aa74c0a90\",\"digest\":\"sha256:970aa74c0a90ef7482477cf803618e776e173c007bf957f635f1015bfcfef0e6\",\"tot"}
+{"ts": "2026-04-01T09:54:04", "route": "claude", "raison": "défaut", "prompt": "gain de token a combien ? met a jour le flow et tout le readme de reduc-token"}
+{"ts": "2026-04-01T09:58:57", "route": "claude", "raison": "chemin/extension détecté", "prompt": "<ide_selection>The user selected the lines 81 to 81 from /home/msalaun/fanlab/goniometrie/reduc-token/README.md:\nembeddi"}
+{"ts": "2026-04-01T10:02:02", "route": "claude", "raison": "chemin/extension détecté", "prompt": "<ide_selection>The user selected the lines 1 to 267 from /home/msalaun/fanlab/goniometrie/reduc-token/README.md:\n# reduc"}
+{"ts": "2026-04-01T10:06:43", "route": "claude", "raison": "défaut", "prompt": "Le seul truc que tu dois résoudre : séparer l'intention (cachable) des entités (dynamiques). \"reporter une séance\" c'est"}
+{"ts": "2026-04-01T10:08:30", "route": "claude", "raison": "défaut", "prompt": "des MCP calls ?"}
+{"ts": "2026-04-01T10:09:32", "route": "claude", "raison": "défaut", "prompt": "enfaite je veux rendre generique ce projet pour reduire token de claude code mais de LLM chatbot app qui font des action"}
+{"ts": "2026-04-01T10:11:53", "route": "claude", "raison": "défaut", "prompt": "oui je pense on est d'accord que c'est une bonne idee et pour mon utilisation de claude code et pour les actions user ?"}
+{"ts": "2026-04-01T10:12:32", "route": "claude", "raison": "défaut", "prompt": "fait ça"}
+{"ts": "2026-04-01T10:16:56", "route": "claude", "raison": "chemin projet détecté", "prompt": "<ide_opened_file>The user opened the file /home/msalaun/fanlab/goniometrie/reduc-token/config/intents.json in the IDE. T"}
+{"ts": "2026-04-01T10:17:05", "route": "mistral", "raison": "pattern question générale", "prompt": "a quoi sert fft", "mistral_model": "qwen2.5:3b", "mistral_cached": true, "mistral_tokens": 391}
+{"ts": "2026-04-01T10:17:33", "route": "claude", "raison": "défaut", "prompt": "met a jour le read me de reduc-token"}
+{"ts": "2026-04-01T10:19:23", "route": "claude", "raison": "chemin projet détecté", "prompt": "<ide_opened_file>The user opened the file /home/msalaun/fanlab/goniometrie/reduc-token/README.md in the IDE. This may or"}
+{"ts": "2026-04-01T10:19:28", "route": "mistral", "raison": "pattern question générale", "prompt": "c'est quoi la fft", "mistral_model": "qwen2.5:3b", "mistral_cached": true, "mistral_tokens": 348}
+{"ts": "2026-04-01T10:20:40", "route": "mistral", "raison": "pattern question générale", "prompt": "a quoi sert la fft", "mistral_model": "qwen2.5:3b", "mistral_cached": false, "mistral_tokens": 437}
+{"ts": "2026-04-01T10:21:09", "route": "mistral", "raison": "pattern question générale", "prompt": "a quoi sert la fft", "mistral_model": "qwen2.5:3b", "mistral_cached": true, "mistral_tokens": 437}
+{"ts": "2026-04-01T10:21:30", "route": "claude", "raison": "défaut", "prompt": "à koi sert la fft"}
+{"ts": "2026-04-01T11:00:36", "route": "claude", "raison": "chemin projet détecté", "prompt": "<ide_opened_file>The user opened the file /home/msalaun/fanlab/goniometrie/CLAUDE.md in the IDE. This may or may not be "}
+{"ts": "2026-04-01T11:00:51", "route": "claude", "raison": "défaut", "prompt": "à koi sert la fft"}
+{"ts": "2026-04-01T11:01:13", "route": "claude", "raison": "chemin projet détecté", "prompt": "<ide_opened_file>The user opened the file /home/msalaun/fanlab/goniometrie/reduc-token/hooks/auto_context.py in the IDE."}
+{"ts": "2026-04-01T11:01:37", "route": "claude", "raison": "chemin projet détecté", "prompt": "<ide_opened_file>The user opened the file /home/msalaun/fanlab/goniometrie/CLAUDE.md in the IDE. This may or may not be "}
+{"ts": "2026-04-01T11:02:02", "route": "mistral", "raison": "pattern question générale", "prompt": "à koi sert la fft", "mistral_model": "qwen2.5:3b", "mistral_cached": false, "mistral_tokens": 215}
+{"ts": "2026-04-01T11:02:39", "route": "claude", "raison": "défaut", "prompt": "reduc token est propre ?"}
+{"ts": "2026-04-01T11:03:22", "route": "claude", "raison": "chemin projet détecté", "prompt": "<ide_selection>The user selected the lines 87 to 87 from /home/msalaun/fanlab/goniometrie/reduc-token/README.md:\nembeddi"}
+{"ts": "2026-04-01T11:04:16", "route": "claude", "raison": "chemin projet détecté", "prompt": "<ide_opened_file>The user opened the file /home/msalaun/fanlab/goniometrie/reduc-token/README.md in the IDE. This may or"}
+{"ts": "2026-04-01T11:04:50", "route": "claude", "raison": "fichier projet: llm_cache.py", "prompt": "Les fonctions cache_get, cache_set, _prompt_hash, _cache_key dans llm_cache.py sont maintenant mortes — tu peux les supp"}
+{"ts": "2026-04-01T11:07:07", "route": "claude", "raison": "chemin projet détecté", "prompt": "<ide_opened_file>The user opened the file /home/msalaun/fanlab/goniometrie/reduc-token/cache/llm_cache.py in the IDE. Th"}
+{"ts": "2026-04-01T11:08:08", "route": "claude", "raison": "chemin projet détecté", "prompt": "<ide_selection>The user selected the lines 1 to 303 from /home/msalaun/fanlab/goniometrie/reduc-token/README.md:\n# reduc"}
+{"ts": "2026-04-01T11:13:09", "route": "claude", "raison": "chemin projet détecté", "prompt": "<ide_opened_file>The user opened the file /home/msalaun/.claude/settings.json in the IDE. This may or may not be related"}
+{"ts": "2026-04-01T11:13:13", "route": "claude", "raison": "défaut", "prompt": "continue"}
+{"ts": "2026-04-01T13:39:57", "route": "claude", "raison": "chemin projet détecté", "prompt": "<ide_opened_file>The user opened the file /home/msalaun/fanlab/goniometrie/reduc-token/adapters/claude_code/tools/git_di"}
+{"ts": "2026-04-01T13:40:19", "route": "claude", "raison": "identifiant projet: hook", "prompt": "continue se que tu avais arreter a cause du manque de token et la ou ya mes routes dans reduc-token il faut les rendre g"}
+{"ts": "2026-04-01T14:25:25", "route": "claude", "raison": "défaut", "prompt": "tout est bon est bien placé ?"}
+{"ts": "2026-04-01T14:25:50", "route": "claude", "raison": "défaut", "prompt": "fait le"}
+{"ts": "2026-04-01T14:29:19", "route": "claude", "raison": "chemin projet détecté", "prompt": "<ide_opened_file>The user opened the file /home/msalaun/fanlab/goniometrie/reduc-token/config/intents.json in the IDE. T"}
+{"ts": "2026-04-01T14:30:23", "route": "claude", "raison": "défaut", "prompt": "le install.py se lance seul il faut pas que les users ai a le faire"}
+{"ts": "2026-04-01T14:30:41", "route": "claude", "raison": "défaut", "prompt": "ok met a jour le readme"}
+{"ts": "2026-04-01T14:31:22", "route": "claude", "raison": "défaut", "prompt": "comment il l'utilise soit en mode claude code soit middleware pour chatbot ou les deux ?"}
+{"ts": "2026-04-01T14:33:06", "route": "claude", "raison": "défaut", "prompt": "enfaite c'est deux projet distinct limite qui on presque le meme flow"}
+{"ts": "2026-04-01T14:35:25", "route": "claude", "raison": "chemin projet détecté", "prompt": "<ide_opened_file>The user opened the file /home/msalaun/fanlab/goniometrie/reduc-token/core/executor.py in the IDE. This"}
+{"ts": "2026-04-01T14:37:50", "route": "claude", "raison": "défaut", "prompt": "continue et ne compact pas"}
+{"ts": "2026-04-01T14:40:48", "route": "claude", "raison": "chemin projet détecté", "prompt": "<ide_opened_file>The user opened the file /home/msalaun/fanlab/goniometrie/reduc-token/README.md in the IDE. This may or"}
+{"ts": "2026-04-01T14:42:42", "route": "claude", "raison": "chemin projet détecté", "prompt": "<ide_selection>The user selected the lines 36 to 36 from /home/msalaun/fanlab/goniometrie/reduc-token/adapters/chatbot/b"}
+{"ts": "2026-04-01T14:45:09", "route": "mistral", "raison": "pattern question générale", "prompt": "ok explique ça dans le readme", "mistral_model": "qwen2.5:3b", "mistral_cached": false, "mistral_tokens": 604}

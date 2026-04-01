@@ -1,0 +1,355 @@
+# goniometrie — Project Map
+> Generated: 2026-04-01 | 63 files | 165 functions | 0 components | 25 classes
+
+## 📁 `api-goniometrie/`
+
+### 📦 `requirements.txt` `[python-deps]`
+- packages: fastapi==0.115.12, uvicorn[standard]==0.34.0, sqlalchemy[asyncio]==2.0.40, asyncpg==0.30.0, alembic==1.15.2, pydantic-settings==2.8.1
+
+## 📁 `api-goniometrie/app/`
+
+###  `config.py`
+- **class Settings(BaseSettings)**
+
+###  `database.py`
+- **class Base(DeclarativeBase)**
+
+###  `dependencies.py`
+- `async get_db() -> AsyncGenerator[AsyncSession, None]`
+
+### 🚀 `main.py` `[fastapi-app]`
+- `async lifespan(app: FastAPI)`
+- `async unhandled_exception_handler(request: Request, exc: Exception)`
+- `async health()` **`GET /health`**
+
+###  `ws_manager.py`
+- **class ConnectionManager**
+  - `__init__()`
+  - `async connect(ws: WebSocket)`
+  - `disconnect(ws: WebSocket)`
+  - `async broadcast(data: dict)`
+
+## 📁 `api-goniometrie/app/crud/`
+
+###  `bande_frequence.py`
+- `async create_bande(db: AsyncSession, profil_id: int, data: BandeFrequenceCreate) -> BandeFrequence`
+- `async delete_bande(db: AsyncSession, bande_id: int) -> bool`
+- `async get_bandes_actives(db: AsyncSession) -> list[BandeActiveRead]` — Retourne toutes les bandes des profils actifs avec les paramètres RF du profil.
+
+###  `freq_lock.py`
+- `async delete_all_locks(db: AsyncSession) -> None`
+- `async create_freq_lock(db: AsyncSession, data: FrequenceLockeeCreate) -> FrequenceLockee`
+- `async get_freq_locks(db: AsyncSession) -> list[FrequenceLockee]`
+- `async update_lock_azimuth(db: AsyncSession, lock_id: int, azimuth_deg: float, gisement_deg: float, confidence: float, snr_max_db: float) -> FrequenceLockee | None`
+- `async delete_freq_lock(db: AsyncSession, lock_id: int) -> bool`
+
+###  `mesure.py`
+- `async create_mesure(db: AsyncSession, data: MesureCreate) -> Mesure`
+- `async get_mesures(db: AsyncSession, skip: int = 0, limit: int = 10, since: datetime | None = None) -> list[Mesure]`
+- `async get_mesure(db: AsyncSession, mesure_id: int) -> Mesure | None`
+- `async delete_mesure(db: AsyncSession, mesure_id: int) -> bool`
+- `async delete_all_mesures(db: AsyncSession) -> None`
+
+###  `profil_menace.py`
+- `async create_profil(db: AsyncSession, data: ProfilMenaceCreate) -> ProfilMenace`
+- `async count_profils(db: AsyncSession) -> int`
+- `async get_profils(db: AsyncSession, skip: int = 0, limit: int = 5) -> list[ProfilMenace]`
+- `async get_profil(db: AsyncSession, profil_id: int) -> ProfilMenace | None`
+- `async get_profil_actif(db: AsyncSession) -> ProfilMenace | None`
+- `async set_profil_active(db: AsyncSession, profil_id: int, active: bool) -> ProfilMenace | None`
+- `async delete_profil(db: AsyncSession, profil_id: int) -> bool`
+
+## 📁 `api-goniometrie/app/models/`
+
+###  `bande_frequence.py`
+- **class BandeFrequence(Base)**
+
+###  `freq_lock.py`
+- **class FrequenceLockee(Base)**
+
+###  `mesure.py`
+- **class Mesure(Base)**
+
+###  `profil_menace.py`
+- **class ProfilMenace(Base)**
+
+## 📁 `api-goniometrie/app/routers/`
+
+### 🔌 `freq_locks.py` `[fastapi-router]`
+- `async create_freq_lock(data: schemas.FrequenceLockeeCreate, db: AsyncSession = Depends(get_db))` **`POST /`**
+- `async get_lock_actif(db: AsyncSession = Depends(get_db))` **`GET /actif`** — Retourne le lock actif (null si aucun). Utilisé par le scanner.
+- `async get_freq_lock(lock_id: int, db: AsyncSession = Depends(get_db))` **`GET /{lock_id}`**
+- `async list_freq_locks(db: AsyncSession = Depends(get_db))` **`GET /`**
+- `async set_azimuth(lock_id: int, data: schemas.AzimuthUpdate, db: AsyncSession = Depends(get_db))` **`PATCH /{lock_id}/azimuth`** — Reçoit le résultat du scan servo (azimuth + gisement) calculé par le scanner.
+- `async delete_freq_lock(lock_id: int, db: AsyncSession = Depends(get_db))` **`DELETE /{lock_id}`**
+
+### 🔌 `mesures.py` `[fastapi-router]`
+- `async mesures_ws(ws: WebSocket)` **`WEBSOCKET /ws`**
+- `async create_mesure(data: schemas.MesureCreate, db: AsyncSession = Depends(get_db))` **`POST /`**
+- `async list_mesures(skip: int = Query(default=0, ge=0), limit: int = Query(default=10, ge=1, le=1000), window_minutes: int | None = Query(default=None, ge=1, le=24 * 60), since: datetime | None = Query(default=None), db: AsyncSession = Depends(get_db))` **`GET /`**
+- `async clear_mesures(db: AsyncSession = Depends(get_db))` **`DELETE /`**
+- `async get_mesure(mesure_id: int, db: AsyncSession = Depends(get_db))` **`GET /{mesure_id}`**
+- `async delete_mesure(mesure_id: int, db: AsyncSession = Depends(get_db))` **`DELETE /{mesure_id}`**
+
+### 🔌 `profils.py` `[fastapi-router]`
+- `async create_profil(data: schemas.ProfilMenaceCreate, db: AsyncSession = Depends(get_db))` **`POST /`**
+- `async list_profils(skip: int = Query(0, ge=0), limit: int = Query(5, ge=1, le=100), db: AsyncSession = Depends(get_db))` **`GET /`**
+- `async get_bandes_actives(db: AsyncSession = Depends(get_db))` **`GET /actifs/bandes`** — Point d'entrée utilisé par le scanner pour récupérer les bandes à surveiller.
+- `async get_profil_actif(db: AsyncSession = Depends(get_db))` **`GET /actif`**
+- `async get_profil(profil_id: int, db: AsyncSession = Depends(get_db))` **`GET /{profil_id}`**
+- `async activer_profil(profil_id: int, db: AsyncSession = Depends(get_db))` **`PATCH /{profil_id}/activer`**
+- `async desactiver_profil(profil_id: int, db: AsyncSession = Depends(get_db))` **`PATCH /{profil_id}/desactiver`**
+- `async delete_profil(profil_id: int, db: AsyncSession = Depends(get_db))` **`DELETE /{profil_id}`**
+- `async add_bande(profil_id: int, data: schemas.BandeFrequenceCreate, db: AsyncSession = Depends(get_db))` **`POST /{profil_id}/bandes`**
+- `async delete_bande(bande_id: int, db: AsyncSession = Depends(get_db))` **`DELETE /bandes/{bande_id}`**
+
+## 📁 `api-goniometrie/app/schemas/`
+
+### 📐 `bande.py` `[pydantic-models]`
+- **class BandeFrequenceCreate(BaseModel)**
+- **class BandeFrequenceRead(BandeFrequenceCreate)**
+- **class BandeActiveRead(BaseModel)**
+
+### 📐 `freq_lock.py` `[pydantic-models]`
+- **class FrequenceLockeeCreate(BaseModel)**
+- **class AzimuthUpdate(BaseModel)** — Résultat d'un scan servo envoyé par le scanner après calcul de gisement.
+- **class FrequenceLockeeRead(FrequenceLockeeCreate)**
+
+### 📐 `mesure.py` `[pydantic-models]`
+- **class MesureCreate(BaseModel)**
+- **class MesureRead(MesureCreate)**
+
+### 📐 `profil.py` `[pydantic-models]`
+- **class ProfilMenaceCreate(BaseModel)**
+- **class ProfilMenaceRead(ProfilMenaceCreate)**
+- **class ProfilMenacePage(BaseModel)**
+
+## 📁 `front-goniometrie/`
+
+### 📦 `package.json` `[package-config]`
+- scripts: `dev`, `build`, `lint`, `preview`
+- deps: @reduxjs/toolkit, @tailwindcss/vite, axios, react, react-dom, react-icons, react-redux, react-router-dom, tailwindcss
+
+- ⚠️ `vite.config.ts` — parse error: tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript
+## 📁 `front-goniometrie/src/`
+
+- ⚠️ `App.tsx` — parse error: tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript
+- ⚠️ `main.tsx` — parse error: tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript
+## 📁 `front-goniometrie/src/app/`
+
+- ⚠️ `hooks.ts` — parse error: tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript
+- ⚠️ `store.tsx` — parse error: tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript
+## 📁 `front-goniometrie/src/components/`
+
+- ⚠️ `ConfirmModal.tsx` — parse error: tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript
+- ⚠️ `FreqInput.tsx` — parse error: tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript
+## 📁 `front-goniometrie/src/domains/`
+
+- ⚠️ `axiosInstance.ts` — parse error: tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript
+## 📁 `front-goniometrie/src/domains/freq_locks/`
+
+- ⚠️ `service.ts` — parse error: tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript
+- ⚠️ `slice.ts` — parse error: tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript
+## 📁 `front-goniometrie/src/domains/freq_locks/components/`
+
+- ⚠️ `FreqLockModal.tsx` — parse error: tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript
+## 📁 `front-goniometrie/src/domains/mesures/`
+
+- ⚠️ `service.ts` — parse error: tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript
+- ⚠️ `slice.ts` — parse error: tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript
+- ⚠️ `useMesuresWS.ts` — parse error: tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript
+## 📁 `front-goniometrie/src/domains/profils/`
+
+- ⚠️ `service.ts` — parse error: tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript
+- ⚠️ `slice.ts` — parse error: tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript
+## 📁 `front-goniometrie/src/domains/profils/components/`
+
+- ⚠️ `BandeForm.tsx` — parse error: tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript
+- ⚠️ `ProfilCard.tsx` — parse error: tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript
+- ⚠️ `ProfilForm.tsx` — parse error: tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript
+## 📁 `front-goniometrie/src/pages/`
+
+- ⚠️ `MesuresPage.tsx` — parse error: tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript
+- ⚠️ `ProfilsPage.tsx` — parse error: tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript
+## 📁 `front-goniometrie/src/types/`
+
+- ⚠️ `index.ts` — parse error: tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript
+## 📁 `reduc-token/`
+
+###  `install.py` — install.py — Configure automatiquement les hooks Claude Code dans ~/.claude/settings.json.
+- `check() -> bool` — Retourne True si tous les hooks sont configurés.
+- `install() -> None`
+- `uninstall() -> None`
+- `main() -> None`
+
+### 📦 `requirements.txt` `[python-deps]`
+- packages: redis>=5.0, httpx>=0.27
+
+## 📁 `reduc-token/adapters/chatbot/`
+
+###  `bot.py` — bot.py — Adapter chatbot pour reduc-token.
+- **class Chatbot** — Chatbot générique reduc-token.
+  - `__init__(config_dir: Path | str = ROOT / 'config', claude_api_key: str = '', claude_model: str = _DEFAULT_CLAUDE_MODEL, system_prompt: str = 'Tu es un assistant utile et concis.')`
+  - `ask(message: str) -> dict` — Traite un message et retourne un dict :
+- `main() -> None`
+
+## 📁 `reduc-token/adapters/claude_code/`
+
+###  `hook.py` — auto_context.py — Hook UserPromptSubmit pour reduc-token.
+- `main() -> None`
+
+## 📁 `reduc-token/adapters/claude_code/mcp/`
+
+###  `mcp_server.py` — mcp_server.py — Serveur MCP (Model Context Protocol) pour reduc-token.
+- `handle_project_mapper(args: dict) -> str`
+- `handle_session_summary(args: dict) -> str`
+- `handle_git_diff(args: dict) -> str`
+- `handle_llm_ask(args: dict) -> str`
+- `handle_llm_history(args: dict) -> str`
+- `handle_smart_ask(args: dict) -> str`
+- `handle_llm_clear_cache(args: dict) -> str`
+- `run_stdio() -> None`
+- `run_http(port: int) -> None` — Mode HTTP simple pour tester les outils sans client MCP.
+- `main() -> None`
+
+## 📁 `reduc-token/adapters/claude_code/tools/`
+
+###  `git_diff_summary.py` — git_diff_summary.py — Transforme git diff en liste structurée lisible par Claude.
+- `parse_diff(raw: str) -> list[dict]` — Parse un git diff unifié et retourne les changements par fichier.
+- `format_output(changes: list[dict], stat_only: bool = False) -> str`
+- `main() -> None`
+
+### 🚀 `project_mapper.py` `[fastapi-app]` — project_mapper.py — Analyse un projet Python/FastAPI + TypeScript/React et génère :
+- `parse_python_file(filepath: Path, root: Path) -> dict`
+- `parse_ts_file(filepath: Path, root: Path) -> dict`
+- `parse_package_json(filepath: Path, root: Path) -> dict`
+- `parse_requirements_txt(filepath: Path, root: Path) -> dict`
+- `parse_shell_file(filepath: Path, root: Path) -> dict`
+- `scan_project(root: Path, incremental: bool = False, json_path: Path | None = None) -> dict`
+- `build_relations(data: dict) -> dict` — Construit les dépendances fichier→fichier et les appels inter-fichiers.
+- `generate_claude_md_compact(data: dict, output_path: Path) -> None` — Génère CLAUDE.md — version ultra-compacte (chargée à chaque prompt).
+- `generate_claude_md(data: dict, output_path: Path)`
+- `main()`
+
+###  `session_summary.py` — session_summary.py — Résumé structuré de la session courante pour Claude Code.
+- `git_diff_summary(since: str = 'HEAD') -> list[dict]` — Retourne la liste des fichiers modifiés avec les fonctions/classes touchées.
+- `recent_commits(n: int = 5) -> list[str]`
+- `generate_summary(since: str = 'HEAD', note: str = '') -> str`
+- `main() -> None`
+
+## 📁 `reduc-token/cache/`
+
+###  `llm_cache.py` — llm_cache.py — Interface LLM avec cache Redis à deux niveaux.
+- `get_redis() -> redis.Redis`
+- `clear_cache() -> int`
+- `get_embedding(prompt: str) -> list[float] | None` — Appelle Ollama nomic-embed-text, retourne le vecteur ou None si indisponible.
+- `embed_search(prompt: str, model: str, threshold: float = EMBED_SIMILARITY_THRESHOLD) -> dict | None` — Cherche dans Redis une réponse sémantiquement proche.
+- `embed_store(prompt: str, model: str, entry: dict) -> None` — Stocke le vecteur embedding + l'entrée réponse pour les recherches futures.
+- `ask_ollama(prompt: str, model: str = OLLAMA_MODEL, stream: bool = True) -> tuple[str, int]` — Envoie un prompt à Ollama et retourne (réponse, nb_tokens).
+- `ask_online(prompt: str, model: str = 'mistral-small-latest', api_key: str = '', api_url: str = 'https://api.mistral.ai/v1') -> tuple[str, int]` — Envoie un prompt à l'API Mistral cloud (ou compatible OpenAI).
+- `ask(prompt: str, model: str = OLLAMA_MODEL, use_cache: bool = True, online: bool = False, api_key: str = '', api_url: str = 'https://api.mistral.ai/v1', online_model: str = 'mistral-small-latest', embed_threshold: float = EMBED_SIMILARITY_THRESHOLD) -> dict` — Pose une question au LLM avec cache Redis à deux niveaux.
+- `main() -> None`
+
+## 📁 `reduc-token/core/`
+
+###  `classifier.py` — classifier.py — Classification d'intent via LLM local (Ollama JSON mode).
+- `load_intents(config_path: Path) -> list[dict]` — Charge la liste des intents depuis intents.json.
+- `load_config(config_path: Path) -> dict` — Charge la config complète (base_url + intents).
+- `classify(message: str, intents: list[dict]) -> dict` — Classifie le message et extrait les entités.
+- `find_intent_config(intent_name: str, intents: list[dict]) -> dict | None` — Retrouve la config complète d'un intent par son nom.
+
+###  `executor.py` — executor.py — Exécution d'actions HTTP depuis l'intent registry.
+- `execute(intent_config: dict, entities: dict, base_url: str = '') -> dict` — Exécute l'action HTTP définie dans intent_config.
+- `format_response(intent_config: dict, entities: dict, result: dict) -> str` — Formate la réponse finale à afficher à l'utilisateur.
+
+## 📁 `sdr-scanner/`
+
+###  `gisement.py` — gisement.py — Pipeline de calcul de gisement radiogoniométrique.
+- **class PointScan(TypedDict)**
+- **class ResultatGisement(TypedDict)**
+- **class GisementCalculator** — Calcule le gisement RF à partir d'un scan azimutal Vivaldi (-90° à +90°).
+  - `__init__(snr_threshold_db: float = 10.0, smoothing_window: int = 7, smoothing_poly: int = 3, min_points: int = 10, cap_deg: float = 0.0) -> None`
+  - `add_point(angle: float, puissance_db: float, snr_db: float) -> ResultatGisement | None` — Ajoute un point au buffer. Retourne un résultat partiel si buffer >= min_points.
+  - `compute(points: list[PointScan] | None = None) -> ResultatGisement | None` — Pipeline complet : lissage → masque SNR → pic → barycentre linéaire → azimuth.
+  - `reset() -> None` — Vide le buffer pour un nouveau scan.
+
+###  `hackrf_device.py` — Initialisation et contrôle du HackRF Pro via SoapySDR.
+- **class HackRFDevice**
+  - `__init__(cfg: dict)`
+  - `open(retries: int = 4, retry_delay: float = 2.0)` — Détecte et ouvre le premier HackRF disponible.
+  - `reopen()` — Détruit et recrée l'objet SoapySDR (reset logiciel de l'état USB libhackrf).
+  - `close()`
+  - `retune(center_freq_hz: float, sample_rate_hz: float, bandwidth_hz: float, settle_ms: int = 120)` — Change la fréquence (et SR/BW si nécessaire).
+  - `drain(duration_sec: float, should_stop = None)` — Lit et jette les échantillons pendant duration_sec.
+  - `read_samples(n_samples: int, max_retries: int = 5)` — Lit n_samples échantillons IQ. Gère OVERFLOW/TIMEOUT.
+  - `__enter__()`
+  - `__exit__(*_)`
+
+### 📦 `requirements.txt` `[python-deps]`
+- packages: numpy>=1.26, scipy>=1.12, httpx>=0.27
+
+###  `run_scanner.sh` — Watchdog : relance scanner.py automatiquement si crash (segfault natif libhackrf).
+
+###  `scanner.py` — Scanner SDR — HackRF Pro
+- `load_config(path: str) -> dict`
+- `fetch_lock_actif(api_url: str) -> dict | None` — Retourne le lock de fréquence actif, ou None si aucun.
+- `bandes_from_lock(lock: dict, cfg: dict) -> list[dict]` — Construit une bande de scan depuis un lock de fréquence.
+- `fetch_bandes_actives(api_url: str) -> list[dict]` — Récupère les bandes des profils actifs depuis l'API.
+- `bandes_from_config(cfg: dict) -> list[dict]` — Construit une liste de bandes depuis config.json (fallback sans profil API).
+- `post_result(api_url: str, payload: dict)` — Envoie une mesure à svc-gonio.
+- `post_azimuth(api_url: str, lock_id: int, result: dict)` — Envoie le résultat de gisement à svc-gonio.
+- `move_servo(angle_deg: float, cfg: dict) -> None` — Déplace le servo DS3218MG à l'angle donné.
+- `scan_at_angle(dev: 'HackRFDevice', angle_deg: float, bande: dict, fft_size: int, integration_count: int, cfg: dict) -> dict` — Positionne le servo et lit la puissance à la fréquence lockée.
+- `run_gisement_scan(dev: 'HackRFDevice', lock: dict, cfg: dict, api_url: str, simulate: bool = False) -> None` — Scan servo complet sur la fréquence lockée → calcul azimuth → PATCH le lock.
+- `scan_bande(dev: HackRFDevice, bande: dict, fft_size: int, integration_count: int) -> dict` — Retune le HackRF sur la bande, acquiert et retourne le résultat.
+- `run(cfg: dict, send_to_api: bool, simulate: bool = False)`
+- `main()`
+
+###  `setup.sh`
+
+###  `signal_processor.py` — Traitement du signal : FFT, calcul de puissance, pic de fréquence.
+- `compute_fft(samples: np.ndarray, fft_size: int, sample_rate: float, center_freq: float) -> tuple[np.ndarray, np.ndarray]` — Retourne (freqs_hz, power_db) pour un bloc d'échantillons IQ.
+- `integrate_power(samples_list: list[np.ndarray], fft_size: int, sample_rate: float, center_freq: float) -> tuple[np.ndarray, np.ndarray]` — Moyenne de puissance sur plusieurs blocs (réduction du bruit).
+- `peak_info(freqs: np.ndarray, power_db: np.ndarray, dc_guard_bins: int = 8, noise_percentile: int = 20) -> dict` — Retourne le pic avec le meilleur SNR (puissance - plancher de bruit).
+
+###  `simulateur.py` — simulateur.py — Simulateur de scan Vivaldi pour tests sans hardware.
+- **class PointScan(TypedDict)**
+- **class GonioSimulator** — Simule un scan servo Vivaldi sans HackRF ni servo réel.
+  - `__init__(true_angle_deg: float = 0.0, source_power_dbfs: float = -20.0, lobe_width_deg: float = 50.0, front_back_ratio_db: float = 18.0, noise_std_db: float = 2.0, step_deg: float = 2.0) -> None`
+  - `generate_scan(seed: int | None = None) -> list[PointScan]` — Scan complet -90° à +90°, noise floor par percentile 20.
+  - `generate_step(angle: float) -> PointScan` — Un seul point pour simulation pas à pas (temps réel).
+
+## 🔗 Relations inter-fichiers
+
+### Dépendances fichier → fichier
+- `database.py` → `config.py`
+- `dependencies.py` → `database.py`
+- `main.py` → `config.py`, `database.py`
+- `bande_frequence.py` → `database.py`
+- `freq_lock.py` → `database.py`
+- `mesure.py` → `database.py`
+- `profil_menace.py` → `database.py`
+- `freq_locks.py` → `dependencies.py`
+- `mesures.py` → `dependencies.py`, `ws_manager.py`
+- `profils.py` → `dependencies.py`
+- `profil.py` → `bande.py`
+- `scanner.py` → `gisement.py`, `hackrf_device.py`, `signal_processor.py`, `simulateur.py`
+
+### Appels inter-fichiers
+| Appelant | Fonction | → | Cible | Fonction |
+|----------|----------|----|-------|----------|
+| `dependencies.py` | `get_db` | → | `database.py` | `AsyncSessionLocal` |
+| `main.py` | `lifespan` | → | `database.py` | `begin` |
+| `mesures.py` | `mesures_ws` | → | `ws_manager.py` | `connect` |
+| `mesures.py` | `mesures_ws` | → | `ws_manager.py` | `disconnect` |
+| `mesures.py` | `create_mesure` | → | `ws_manager.py` | `broadcast` |
+| `mesures.py` | `clear_mesures` | → | `ws_manager.py` | `broadcast` |
+| `scanner.py` | `run_gisement_scan` | → | `gisement.py` | `GisementCalculator` |
+| `scanner.py` | `run_gisement_scan` | → | `simulateur.py` | `GonioSimulator` |
+| `scanner.py` | `scan_bande` | → | `signal_processor.py` | `integrate_power` |
+| `scanner.py` | `scan_bande` | → | `signal_processor.py` | `peak_info` |
+| `scanner.py` | `run` | → | `hackrf_device.py` | `HackRFDevice` |
+
+---
+*Auto-generated — do not edit manually.*
+*Regenerate: `python project_mapper.py --md-only`*

@@ -1,0 +1,113 @@
+{
+  "base_url": "http://localhost:8000",
+  "intents": [
+    {
+      "name": "lock_frequency",
+      "type": "ACTION",
+      "description": "Verrouiller une fréquence radio pour analyse goniométrique",
+      "entities": [
+        {"name": "frequency_mhz", "type": "float", "required": true}
+      ],
+      "action": {
+        "method": "POST",
+        "url": "/freq-locks",
+        "body": {"frequency_mhz": "{frequency_mhz}"}
+      },
+      "response_template": "Fréquence {frequency_mhz} MHz verrouillée."
+    },
+    {
+      "name": "get_active_lock",
+      "type": "ACTION",
+      "description": "Récupérer le lock de fréquence actuellement actif",
+      "entities": [],
+      "action": {
+        "method": "GET",
+        "url": "/freq-locks/actif"
+      },
+      "response_template": "Lock actif : {frequency_mhz} MHz (id={id})"
+    },
+    {
+      "name": "delete_lock",
+      "type": "ACTION",
+      "description": "Supprimer un lock de fréquence par son id",
+      "entities": [
+        {"name": "lock_id", "type": "int", "required": true}
+      ],
+      "action": {
+        "method": "DELETE",
+        "url": "/freq-locks/{lock_id}"
+      },
+      "response_template": "Lock {lock_id} supprimé. Profil précédent réactivé."
+    },
+    {
+      "name": "get_mesures",
+      "type": "ACTION",
+      "description": "Lister les mesures de goniométrie enregistrées",
+      "entities": [],
+      "action": {
+        "method": "GET",
+        "url": "/mesures"
+      },
+      "response_template": "{count} mesures disponibles."
+    },
+    {
+      "name": "clear_mesures",
+      "type": "ACTION",
+      "description": "Supprimer toutes les mesures",
+      "entities": [],
+      "action": {
+        "method": "DELETE",
+        "url": "/mesures"
+      },
+      "response_template": "Toutes les mesures ont été supprimées."
+    },
+    {
+      "name": "get_active_profil",
+      "type": "ACTION",
+      "description": "Récupérer le profil de menace actuellement actif",
+      "entities": [],
+      "action": {
+        "method": "GET",
+        "url": "/profils/actif"
+      },
+      "response_template": "Profil actif : {name} (id={id})"
+    },
+    {
+      "name": "activate_profil",
+      "type": "ACTION",
+      "description": "Activer un profil de menace par son id",
+      "entities": [
+        {"name": "profil_id", "type": "int", "required": true}
+      ],
+      "action": {
+        "method": "PATCH",
+        "url": "/profils/{profil_id}/activer"
+      },
+      "response_template": "Profil {profil_id} activé."
+    },
+    {
+      "name": "deactivate_profil",
+      "type": "ACTION",
+      "description": "Désactiver un profil de menace par son id",
+      "entities": [
+        {"name": "profil_id", "type": "int", "required": true}
+      ],
+      "action": {
+        "method": "PATCH",
+        "url": "/profils/{profil_id}/desactiver"
+      },
+      "response_template": "Profil {profil_id} désactivé."
+    },
+    {
+      "name": "get_profils",
+      "type": "ACTION",
+      "description": "Lister tous les profils de menace",
+      "entities": [],
+      "action": {
+        "method": "GET",
+        "url": "/profils"
+      },
+      "response_template": "{total} profils disponibles."
+    }
+  ]
+}

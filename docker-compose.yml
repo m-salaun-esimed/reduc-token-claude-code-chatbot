@@ -1,0 +1,23 @@
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: reduc-token-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    restart: unless-stopped
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: reduc-token-ollama
+    ports:
+      - "11435:11434"
+    volumes:
+      - ollama_models:/root/.ollama
+    restart: unless-stopped
+
+volumes:
+  redis_data:
+  ollama_models:

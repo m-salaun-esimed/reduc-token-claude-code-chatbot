@@ -1,0 +1,5026 @@
+{
+  "project": "goniometrie",
+  "root": "/home/msalaun/fanlab/goniometrie",
+  "generated_at": "2026-04-01T14:42:42.262589",
+  "stats": {
+    "total_files": 63,
+    "skipped": 4759,
+    "total_classes": 25,
+    "total_functions": 165,
+    "total_components": 0
+  },
+  "files": [
+    {
+      "path": "api-goniometrie/app/config.py",
+      "lang": "python",
+      "role": null,
+      "description": "",
+      "lines": 13,
+      "imports": [
+        "pydantic_settings"
+      ],
+      "import_aliases": {
+        "BaseSettings": "pydantic_settings"
+      },
+      "classes": [
+        {
+          "name": "Settings",
+          "bases": [
+            "BaseSettings"
+          ],
+          "description": "",
+          "line": 4,
+          "methods": []
+        }
+      ],
+      "functions": []
+    },
+    {
+      "path": "api-goniometrie/app/crud/bande_frequence.py",
+      "lang": "python",
+      "role": null,
+      "description": "",
+      "lines": 46,
+      "imports": [
+        "sqlalchemy",
+        "sqlalchemy.orm",
+        "sqlalchemy.ext.asyncio",
+        "models",
+        "schemas"
+      ],
+      "import_aliases": {
+        "select": "sqlalchemy",
+        "selectinload": "sqlalchemy.orm",
+        "AsyncSession": "sqlalchemy.ext.asyncio",
+        "BandeFrequence": "models",
+        "ProfilMenace": "models",
+        "BandeFrequenceCreate": "schemas",
+        "BandeActiveRead": "schemas"
+      },
+      "classes": [],
+      "functions": [
+        {
+          "name": "create_bande",
+          "signature": "async create_bande(db: AsyncSession, profil_id: int, data: BandeFrequenceCreate) -> BandeFrequence",
+          "description": "",
+          "line": 8,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "BandeFrequence",
+            "db.add",
+            "db.commit",
+            "db.refresh",
+            "data.model_dump"
+          ]
+        },
+        {
+          "name": "delete_bande",
+          "signature": "async delete_bande(db: AsyncSession, bande_id: int) -> bool",
+          "description": "",
+          "line": 16,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "result.scalar_one_or_none",
+            "db.execute",
+            "db.delete",
+            "db.commit",
+            "select(BandeFrequence).where",
+            "select"
+          ]
+        },
+        {
+          "name": "get_bandes_actives",
+          "signature": "async get_bandes_actives(db: AsyncSession) -> list[BandeActiveRead]",
+          "description": "Retourne toutes les bandes des profils actifs avec les paramètres RF du profil.",
+          "line": 26,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "result.scalars().all",
+            "db.execute",
+            "BandeActiveRead",
+            "select(BandeFrequence).join(ProfilMenace).where(ProfilMenace.active == True).options",
+            "result.scalars",
+            "selectinload",
+            "select(BandeFrequence).join(ProfilMenace).where",
+            "select(BandeFrequence).join",
+            "select"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "api-goniometrie/app/crud/freq_lock.py",
+      "lang": "python",
+      "role": null,
+      "description": "",
+      "lines": 91,
+      "imports": [
+        "sqlalchemy",
+        "sqlalchemy.ext.asyncio",
+        "models",
+        "schemas"
+      ],
+      "import_aliases": {
+        "select": "sqlalchemy",
+        "AsyncSession": "sqlalchemy.ext.asyncio",
+        "FrequenceLockee": "models",
+        "ProfilMenace": "models",
+        "FrequenceLockeeCreate": "schemas"
+      },
+      "classes": [],
+      "functions": [
+        {
+          "name": "_get_profil_actif",
+          "signature": "async _get_profil_actif(db: AsyncSession) -> ProfilMenace | None",
+          "description": "",
+          "line": 7,
+          "is_async": true,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "result.scalar_one_or_none",
+            "db.execute",
+            "select(ProfilMenace).where",
+            "select"
+          ]
+        },
+        {
+          "name": "delete_all_locks",
+          "signature": "async delete_all_locks(db: AsyncSession) -> None",
+          "description": "",
+          "line": 14,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "result.scalars().all",
+            "db.execute",
+            "select",
+            "result.scalars",
+            "db.delete"
+          ]
+        },
+        {
+          "name": "create_freq_lock",
+          "signature": "async create_freq_lock(db: AsyncSession, data: FrequenceLockeeCreate) -> FrequenceLockee",
+          "description": "",
+          "line": 20,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "FrequenceLockee",
+            "db.add",
+            "_get_profil_actif",
+            "delete_all_locks",
+            "db.commit",
+            "db.refresh",
+            "data.model_dump"
+          ]
+        },
+        {
+          "name": "get_freq_locks",
+          "signature": "async get_freq_locks(db: AsyncSession) -> list[FrequenceLockee]",
+          "description": "",
+          "line": 43,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "list",
+            "db.execute",
+            "result.scalars().all",
+            "select(FrequenceLockee).order_by",
+            "FrequenceLockee.created_at.desc",
+            "result.scalars",
+            "select"
+          ]
+        },
+        {
+          "name": "update_lock_azimuth",
+          "signature": "async update_lock_azimuth(db: AsyncSession, lock_id: int, azimuth_deg: float, gisement_deg: float, confidence: float, snr_max_db: float) -> FrequenceLockee | None",
+          "description": "",
+          "line": 50,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "result.scalar_one_or_none",
+            "db.execute",
+            "db.commit",
+            "db.refresh",
+            "select(FrequenceLockee).where",
+            "select"
+          ]
+        },
+        {
+          "name": "delete_freq_lock",
+          "signature": "async delete_freq_lock(db: AsyncSession, lock_id: int) -> bool",
+          "description": "",
+          "line": 71,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "result.scalar_one_or_none",
+            "db.execute",
+            "db.delete",
+            "profil_result.scalar_one_or_none",
+            "db.commit",
+            "select(FrequenceLockee).where",
+            "select(ProfilMenace).where",
+            "select"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "api-goniometrie/app/crud/mesure.py",
+      "lang": "python",
+      "role": null,
+      "description": "",
+      "lines": 51,
+      "imports": [
+        "datetime",
+        "sqlalchemy",
+        "sqlalchemy.ext.asyncio",
+        "models",
+        "schemas"
+      ],
+      "import_aliases": {
+        "datetime": "datetime",
+        "select": "sqlalchemy",
+        "AsyncSession": "sqlalchemy.ext.asyncio",
+        "Mesure": "models",
+        "MesureCreate": "schemas"
+      },
+      "classes": [],
+      "functions": [
+        {
+          "name": "create_mesure",
+          "signature": "async create_mesure(db: AsyncSession, data: MesureCreate) -> Mesure",
+          "description": "",
+          "line": 8,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "Mesure",
+            "db.add",
+            "db.commit",
+            "db.refresh",
+            "data.model_dump"
+          ]
+        },
+        {
+          "name": "get_mesures",
+          "signature": "async get_mesures(db: AsyncSession, skip: int = 0, limit: int = 10, since: datetime | None = None) -> list[Mesure]",
+          "description": "",
+          "line": 16,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "select",
+            "list",
+            "query.where",
+            "db.execute",
+            "result.scalars().all",
+            "query.order_by(Mesure.created_at.desc()).offset(skip).limit",
+            "result.scalars",
+            "query.order_by(Mesure.created_at.desc()).offset",
+            "query.order_by",
+            "Mesure.created_at.desc"
+          ]
+        },
+        {
+          "name": "get_mesure",
+          "signature": "async get_mesure(db: AsyncSession, mesure_id: int) -> Mesure | None",
+          "description": "",
+          "line": 32,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "result.scalar_one_or_none",
+            "db.execute",
+            "select(Mesure).where",
+            "select"
+          ]
+        },
+        {
+          "name": "delete_mesure",
+          "signature": "async delete_mesure(db: AsyncSession, mesure_id: int) -> bool",
+          "description": "",
+          "line": 37,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "get_mesure",
+            "db.delete",
+            "db.commit"
+          ]
+        },
+        {
+          "name": "delete_all_mesures",
+          "signature": "async delete_all_mesures(db: AsyncSession) -> None",
+          "description": "",
+          "line": 46,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "result.scalars().all",
+            "db.execute",
+            "db.commit",
+            "select",
+            "result.scalars",
+            "db.delete"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "api-goniometrie/app/crud/profil_menace.py",
+      "lang": "python",
+      "role": null,
+      "description": "",
+      "lines": 73,
+      "imports": [
+        "sqlalchemy",
+        "sqlalchemy.orm",
+        "sqlalchemy.ext.asyncio",
+        "models",
+        "schemas"
+      ],
+      "import_aliases": {
+        "select": "sqlalchemy",
+        "func": "sqlalchemy",
+        "selectinload": "sqlalchemy.orm",
+        "AsyncSession": "sqlalchemy.ext.asyncio",
+        "ProfilMenace": "models",
+        "ProfilMenaceCreate": "schemas"
+      },
+      "classes": [],
+      "functions": [
+        {
+          "name": "create_profil",
+          "signature": "async create_profil(db: AsyncSession, data: ProfilMenaceCreate) -> ProfilMenace",
+          "description": "",
+          "line": 8,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "ProfilMenace",
+            "db.add",
+            "db.commit",
+            "get_profil",
+            "data.model_dump"
+          ]
+        },
+        {
+          "name": "count_profils",
+          "signature": "async count_profils(db: AsyncSession) -> int",
+          "description": "",
+          "line": 15,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "result.scalar_one",
+            "db.execute",
+            "select(func.count()).select_from",
+            "select",
+            "func.count"
+          ]
+        },
+        {
+          "name": "get_profils",
+          "signature": "async get_profils(db: AsyncSession, skip: int = 0, limit: int = 5) -> list[ProfilMenace]",
+          "description": "",
+          "line": 20,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "list",
+            "db.execute",
+            "result.scalars().all",
+            "select(ProfilMenace).options(selectinload(ProfilMenace.bandes)).order_by(ProfilMenace.active.desc(), ProfilMenace.created_at.desc()).offset(skip).limit",
+            "result.scalars",
+            "select(ProfilMenace).options(selectinload(ProfilMenace.bandes)).order_by(ProfilMenace.active.desc(), ProfilMenace.created_at.desc()).offset",
+            "select(ProfilMenace).options(selectinload(ProfilMenace.bandes)).order_by",
+            "ProfilMenace.active.desc",
+            "ProfilMenace.created_at.desc",
+            "select(ProfilMenace).options",
+            "selectinload",
+            "select"
+          ]
+        },
+        {
+          "name": "get_profil",
+          "signature": "async get_profil(db: AsyncSession, profil_id: int) -> ProfilMenace | None",
+          "description": "",
+          "line": 31,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "result.scalar_one_or_none",
+            "db.execute",
+            "select(ProfilMenace).options(selectinload(ProfilMenace.bandes)).where",
+            "select(ProfilMenace).options",
+            "selectinload",
+            "select"
+          ]
+        },
+        {
+          "name": "get_profil_actif",
+          "signature": "async get_profil_actif(db: AsyncSession) -> ProfilMenace | None",
+          "description": "",
+          "line": 39,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "result.scalar_one_or_none",
+            "db.execute",
+            "select(ProfilMenace).options(selectinload(ProfilMenace.bandes)).where",
+            "select(ProfilMenace).options",
+            "selectinload",
+            "select"
+          ]
+        },
+        {
+          "name": "set_profil_active",
+          "signature": "async set_profil_active(db: AsyncSession, profil_id: int, active: bool) -> ProfilMenace | None",
+          "description": "",
+          "line": 47,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "get_profil",
+            "others.scalars().all",
+            "db.commit",
+            "delete_all_locks",
+            "db.execute",
+            "select(ProfilMenace).where",
+            "others.scalars",
+            "select"
+          ]
+        },
+        {
+          "name": "delete_profil",
+          "signature": "async delete_profil(db: AsyncSession, profil_id: int) -> bool",
+          "description": "",
+          "line": 66,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "get_profil",
+            "db.delete",
+            "db.commit"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "api-goniometrie/app/database.py",
+      "lang": "python",
+      "role": null,
+      "description": "",
+      "lines": 11,
+      "imports": [
+        "sqlalchemy.ext.asyncio",
+        "sqlalchemy.orm",
+        "config"
+      ],
+      "import_aliases": {
+        "AsyncSession": "sqlalchemy.ext.asyncio",
+        "create_async_engine": "sqlalchemy.ext.asyncio",
+        "async_sessionmaker": "sqlalchemy.ext.asyncio",
+        "DeclarativeBase": "sqlalchemy.orm",
+        "settings": "config"
+      },
+      "classes": [
+        {
+          "name": "Base",
+          "bases": [
+            "DeclarativeBase"
+          ],
+          "description": "",
+          "line": 9,
+          "methods": []
+        }
+      ],
+      "functions": []
+    },
+    {
+      "path": "api-goniometrie/app/dependencies.py",
+      "lang": "python",
+      "role": null,
+      "description": "",
+      "lines": 9,
+      "imports": [
+        "typing",
+        "sqlalchemy.ext.asyncio",
+        "database"
+      ],
+      "import_aliases": {
+        "AsyncGenerator": "typing",
+        "AsyncSession": "sqlalchemy.ext.asyncio",
+        "AsyncSessionLocal": "database"
+      },
+      "classes": [],
+      "functions": [
+        {
+          "name": "get_db",
+          "signature": "async get_db() -> AsyncGenerator[AsyncSession, None]",
+          "description": "",
+          "line": 6,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "AsyncSessionLocal"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "api-goniometrie/app/main.py",
+      "lang": "python",
+      "role": "fastapi-app",
+      "description": "",
+      "lines": 55,
+      "imports": [
+        "contextlib",
+        "fastapi",
+        "fastapi.middleware.cors",
+        "fastapi.responses",
+        "sqlalchemy",
+        "config",
+        "database",
+        "routers"
+      ],
+      "import_aliases": {
+        "asynccontextmanager": "contextlib",
+        "FastAPI": "fastapi",
+        "Request": "fastapi",
+        "CORSMiddleware": "fastapi.middleware.cors",
+        "JSONResponse": "fastapi.responses",
+        "text": "sqlalchemy",
+        "settings": "config",
+        "engine": "database",
+        "Base": "database",
+        "mesures": "routers",
+        "profils": "routers",
+        "freq_locks": "routers"
+      },
+      "classes": [],
+      "functions": [
+        {
+          "name": "lifespan",
+          "signature": "async lifespan(app: FastAPI)",
+          "description": "",
+          "line": 21,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [
+            "asynccontextmanager"
+          ],
+          "route": null,
+          "calls": [
+            "engine.begin",
+            "conn.run_sync",
+            "conn.execute",
+            "text"
+          ]
+        },
+        {
+          "name": "unhandled_exception_handler",
+          "signature": "async unhandled_exception_handler(request: Request, exc: Exception)",
+          "description": "",
+          "line": 45,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [
+            "app.exception_handler(Exception)"
+          ],
+          "route": null,
+          "calls": [
+            "app.exception_handler",
+            "JSONResponse",
+            "type"
+          ]
+        },
+        {
+          "name": "health",
+          "signature": "async health()",
+          "description": "",
+          "line": 53,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [
+            "app.get('/health')"
+          ],
+          "route": "GET /health",
+          "calls": [
+            "app.get"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "api-goniometrie/app/models/bande_frequence.py",
+      "lang": "python",
+      "role": null,
+      "description": "",
+      "lines": 19,
+      "imports": [
+        "sqlalchemy",
+        "sqlalchemy.orm",
+        "database"
+      ],
+      "import_aliases": {
+        "String": "sqlalchemy",
+        "Integer": "sqlalchemy",
+        "BigInteger": "sqlalchemy",
+        "ForeignKey": "sqlalchemy",
+        "Mapped": "sqlalchemy.orm",
+        "mapped_column": "sqlalchemy.orm",
+        "relationship": "sqlalchemy.orm",
+        "Base": "database"
+      },
+      "classes": [
+        {
+          "name": "BandeFrequence",
+          "bases": [
+            "Base"
+          ],
+          "description": "",
+          "line": 6,
+          "methods": []
+        }
+      ],
+      "functions": []
+    },
+    {
+      "path": "api-goniometrie/app/models/freq_lock.py",
+      "lang": "python",
+      "role": null,
+      "description": "",
+      "lines": 25,
+      "imports": [
+        "datetime",
+        "sqlalchemy",
+        "sqlalchemy.orm",
+        "database"
+      ],
+      "import_aliases": {
+        "datetime": "datetime",
+        "String": "sqlalchemy",
+        "BigInteger": "sqlalchemy",
+        "DateTime": "sqlalchemy",
+        "func": "sqlalchemy",
+        "Mapped": "sqlalchemy.orm",
+        "mapped_column": "sqlalchemy.orm",
+        "Base": "database"
+      },
+      "classes": [
+        {
+          "name": "FrequenceLockee",
+          "bases": [
+            "Base"
+          ],
+          "description": "",
+          "line": 7,
+          "methods": []
+        }
+      ],
+      "functions": []
+    },
+    {
+      "path": "api-goniometrie/app/models/mesure.py",
+      "lang": "python",
+      "role": null,
+      "description": "",
+      "lines": 19,
+      "imports": [
+        "datetime",
+        "sqlalchemy",
+        "sqlalchemy.orm",
+        "database"
+      ],
+      "import_aliases": {
+        "datetime": "datetime",
+        "Float": "sqlalchemy",
+        "DateTime": "sqlalchemy",
+        "String": "sqlalchemy",
+        "func": "sqlalchemy",
+        "Mapped": "sqlalchemy.orm",
+        "mapped_column": "sqlalchemy.orm",
+        "Base": "database"
+      },
+      "classes": [
+        {
+          "name": "Mesure",
+          "bases": [
+            "Base"
+          ],
+          "description": "",
+          "line": 7,
+          "methods": []
+        }
+      ],
+      "functions": []
+    },
+    {
+      "path": "api-goniometrie/app/models/profil_menace.py",
+      "lang": "python",
+      "role": null,
+      "description": "",
+      "lines": 22,
+      "imports": [
+        "datetime",
+        "sqlalchemy",
+        "sqlalchemy.orm",
+        "database"
+      ],
+      "import_aliases": {
+        "datetime": "datetime",
+        "String": "sqlalchemy",
+        "Boolean": "sqlalchemy",
+        "BigInteger": "sqlalchemy",
+        "DateTime": "sqlalchemy",
+        "func": "sqlalchemy",
+        "Mapped": "sqlalchemy.orm",
+        "mapped_column": "sqlalchemy.orm",
+        "relationship": "sqlalchemy.orm",
+        "Base": "database"
+      },
+      "classes": [
+        {
+          "name": "ProfilMenace",
+          "bases": [
+            "Base"
+          ],
+          "description": "",
+          "line": 7,
+          "methods": []
+        }
+      ],
+      "functions": []
+    },
+    {
+      "path": "api-goniometrie/app/routers/freq_locks.py",
+      "lang": "python",
+      "role": "fastapi-router",
+      "description": "",
+      "lines": 62,
+      "imports": [
+        "typing",
+        "fastapi",
+        "sqlalchemy.ext.asyncio",
+        "dependencies"
+      ],
+      "import_aliases": {
+        "Optional": "typing",
+        "APIRouter": "fastapi",
+        "Depends": "fastapi",
+        "HTTPException": "fastapi",
+        "AsyncSession": "sqlalchemy.ext.asyncio",
+        "get_db": "dependencies"
+      },
+      "classes": [],
+      "functions": [
+        {
+          "name": "create_freq_lock",
+          "signature": "async create_freq_lock(data: schemas.FrequenceLockeeCreate, db: AsyncSession = Depends(get_db))",
+          "description": "",
+          "line": 11,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [
+            "router.post('/', response_model=schemas.FrequenceLockeeRead, status_code=201)"
+          ],
+          "route": "POST /",
+          "calls": [
+            "router.post",
+            "Depends",
+            "crud.create_freq_lock"
+          ]
+        },
+        {
+          "name": "get_lock_actif",
+          "signature": "async get_lock_actif(db: AsyncSession = Depends(get_db))",
+          "description": "Retourne le lock actif (null si aucun). Utilisé par le scanner.",
+          "line": 16,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [
+            "router.get('/actif', response_model=Optional[schemas.FrequenceLockeeRead])"
+          ],
+          "route": "GET /actif",
+          "calls": [
+            "router.get",
+            "Depends",
+            "crud.get_freq_locks"
+          ]
+        },
+        {
+          "name": "get_freq_lock",
+          "signature": "async get_freq_lock(lock_id: int, db: AsyncSession = Depends(get_db))",
+          "description": "",
+          "line": 23,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [
+            "router.get('/{lock_id}', response_model=schemas.FrequenceLockeeRead)"
+          ],
+          "route": "GET /{lock_id}",
+          "calls": [
+            "router.get",
+            "Depends",
+            "next",
+            "crud.get_freq_locks",
+            "HTTPException"
+          ]
+        },
+        {
+          "name": "list_freq_locks",
+          "signature": "async list_freq_locks(db: AsyncSession = Depends(get_db))",
+          "description": "",
+          "line": 32,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [
+            "router.get('/', response_model=list[schemas.FrequenceLockeeRead])"
+          ],
+          "route": "GET /",
+          "calls": [
+            "router.get",
+            "Depends",
+            "crud.get_freq_locks"
+          ]
+        },
+        {
+          "name": "set_azimuth",
+          "signature": "async set_azimuth(lock_id: int, data: schemas.AzimuthUpdate, db: AsyncSession = Depends(get_db))",
+          "description": "Reçoit le résultat du scan servo (azimuth + gisement) calculé par le scanner.",
+          "line": 37,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [
+            "router.patch('/{lock_id}/azimuth', response_model=schemas.FrequenceLockeeRead)"
+          ],
+          "route": "PATCH /{lock_id}/azimuth",
+          "calls": [
+            "router.patch",
+            "Depends",
+            "crud.update_lock_azimuth",
+            "HTTPException"
+          ]
+        },
+        {
+          "name": "delete_freq_lock",
+          "signature": "async delete_freq_lock(lock_id: int, db: AsyncSession = Depends(get_db))",
+          "description": "",
+          "line": 59,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [
+            "router.delete('/{lock_id}', status_code=204)"
+          ],
+          "route": "DELETE /{lock_id}",
+          "calls": [
+            "router.delete",
+            "Depends",
+            "HTTPException",
+            "crud.delete_freq_lock"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "api-goniometrie/app/routers/mesures.py",
+      "lang": "python",
+      "role": "fastapi-router",
+      "description": "",
+      "lines": 64,
+      "imports": [
+        "datetime",
+        "fastapi",
+        "sqlalchemy.ext.asyncio",
+        "dependencies",
+        "ws_manager"
+      ],
+      "import_aliases": {
+        "datetime": "datetime",
+        "timedelta": "datetime",
+        "timezone": "datetime",
+        "APIRouter": "fastapi",
+        "Depends": "fastapi",
+        "HTTPException": "fastapi",
+        "Query": "fastapi",
+        "WebSocket": "fastapi",
+        "WebSocketDisconnect": "fastapi",
+        "AsyncSession": "sqlalchemy.ext.asyncio",
+        "get_db": "dependencies",
+        "manager": "ws_manager"
+      },
+      "classes": [],
+      "functions": [
+        {
+          "name": "mesures_ws",
+          "signature": "async mesures_ws(ws: WebSocket)",
+          "description": "",
+          "line": 12,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [
+            "router.websocket('/ws')"
+          ],
+          "route": "WEBSOCKET /ws",
+          "calls": [
+            "router.websocket",
+            "manager.connect",
+            "manager.disconnect",
+            "ws.receive_text"
+          ]
+        },
+        {
+          "name": "create_mesure",
+          "signature": "async create_mesure(data: schemas.MesureCreate, db: AsyncSession = Depends(get_db))",
+          "description": "",
+          "line": 22,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [
+            "router.post('/', response_model=schemas.MesureRead, status_code=201)"
+          ],
+          "route": "POST /",
+          "calls": [
+            "router.post",
+            "Depends",
+            "crud.create_mesure",
+            "manager.broadcast",
+            "schemas.MesureRead.model_validate(mesure).model_dump",
+            "schemas.MesureRead.model_validate"
+          ]
+        },
+        {
+          "name": "list_mesures",
+          "signature": "async list_mesures(skip: int = Query(default=0, ge=0), limit: int = Query(default=10, ge=1, le=1000), window_minutes: int | None = Query(default=None, ge=1, le=24 * 60), since: datetime | None = Query(default=None), db: AsyncSession = Depends(get_db))",
+          "description": "",
+          "line": 29,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [
+            "router.get('/', response_model=list[schemas.MesureRead])"
+          ],
+          "route": "GET /",
+          "calls": [
+            "router.get",
+            "Query",
+            "Depends",
+            "crud.get_mesures",
+            "datetime.now",
+            "timedelta"
+          ]
+        },
+        {
+          "name": "clear_mesures",
+          "signature": "async clear_mesures(db: AsyncSession = Depends(get_db))",
+          "description": "",
+          "line": 46,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [
+            "router.delete('/', status_code=204)"
+          ],
+          "route": "DELETE /",
+          "calls": [
+            "router.delete",
+            "Depends",
+            "crud.delete_all_mesures",
+            "manager.broadcast"
+          ]
+        },
+        {
+          "name": "get_mesure",
+          "signature": "async get_mesure(mesure_id: int, db: AsyncSession = Depends(get_db))",
+          "description": "",
+          "line": 52,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [
+            "router.get('/{mesure_id}', response_model=schemas.MesureRead)"
+          ],
+          "route": "GET /{mesure_id}",
+          "calls": [
+            "router.get",
+            "Depends",
+            "crud.get_mesure",
+            "HTTPException"
+          ]
+        },
+        {
+          "name": "delete_mesure",
+          "signature": "async delete_mesure(mesure_id: int, db: AsyncSession = Depends(get_db))",
+          "description": "",
+          "line": 60,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [
+            "router.delete('/{mesure_id}', status_code=204)"
+          ],
+          "route": "DELETE /{mesure_id}",
+          "calls": [
+            "router.delete",
+            "Depends",
+            "crud.delete_mesure",
+            "HTTPException"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "api-goniometrie/app/routers/profils.py",
+      "lang": "python",
+      "role": "fastapi-router",
+      "description": "",
+      "lines": 79,
+      "imports": [
+        "fastapi",
+        "sqlalchemy.ext.asyncio",
+        "dependencies"
+      ],
+      "import_aliases": {
+        "APIRouter": "fastapi",
+        "Depends": "fastapi",
+        "HTTPException": "fastapi",
+        "Query": "fastapi",
+        "AsyncSession": "sqlalchemy.ext.asyncio",
+        "get_db": "dependencies"
+      },
+      "classes": [],
+      "functions": [
+        {
+          "name": "create_profil",
+          "signature": "async create_profil(data: schemas.ProfilMenaceCreate, db: AsyncSession = Depends(get_db))",
+          "description": "",
+          "line": 10,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [
+            "router.post('/', response_model=schemas.ProfilMenaceRead, status_code=201)"
+          ],
+          "route": "POST /",
+          "calls": [
+            "router.post",
+            "Depends",
+            "crud.create_profil"
+          ]
+        },
+        {
+          "name": "list_profils",
+          "signature": "async list_profils(skip: int = Query(0, ge=0), limit: int = Query(5, ge=1, le=100), db: AsyncSession = Depends(get_db))",
+          "description": "",
+          "line": 15,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [
+            "router.get('/', response_model=schemas.ProfilMenacePage)"
+          ],
+          "route": "GET /",
+          "calls": [
+            "router.get",
+            "Query",
+            "Depends",
+            "crud.count_profils",
+            "crud.get_profils"
+          ]
+        },
+        {
+          "name": "get_bandes_actives",
+          "signature": "async get_bandes_actives(db: AsyncSession = Depends(get_db))",
+          "description": "Point d'entrée utilisé par le scanner pour récupérer les bandes à surveiller.",
+          "line": 26,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [
+            "router.get('/actifs/bandes', response_model=list[schemas.BandeActiveRead])"
+          ],
+          "route": "GET /actifs/bandes",
+          "calls": [
+            "router.get",
+            "Depends",
+            "crud.get_bandes_actives"
+          ]
+        },
+        {
+          "name": "get_profil_actif",
+          "signature": "async get_profil_actif(db: AsyncSession = Depends(get_db))",
+          "description": "",
+          "line": 32,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [
+            "router.get('/actif', response_model=schemas.ProfilMenaceRead)"
+          ],
+          "route": "GET /actif",
+          "calls": [
+            "router.get",
+            "Depends",
+            "crud.get_profil_actif",
+            "HTTPException"
+          ]
+        },
+        {
+          "name": "get_profil",
+          "signature": "async get_profil(profil_id: int, db: AsyncSession = Depends(get_db))",
+          "description": "",
+          "line": 40,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [
+            "router.get('/{profil_id}', response_model=schemas.ProfilMenaceRead)"
+          ],
+          "route": "GET /{profil_id}",
+          "calls": [
+            "router.get",
+            "Depends",
+            "crud.get_profil",
+            "HTTPException"
+          ]
+        },
+        {
+          "name": "activer_profil",
+          "signature": "async activer_profil(profil_id: int, db: AsyncSession = Depends(get_db))",
+          "description": "",
+          "line": 47,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [
+            "router.patch('/{profil_id}/activer', response_model=schemas.ProfilMenaceRead)"
+          ],
+          "route": "PATCH /{profil_id}/activer",
+          "calls": [
+            "router.patch",
+            "Depends",
+            "crud.set_profil_active",
+            "HTTPException"
+          ]
+        },
+        {
+          "name": "desactiver_profil",
+          "signature": "async desactiver_profil(profil_id: int, db: AsyncSession = Depends(get_db))",
+          "description": "",
+          "line": 55,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [
+            "router.patch('/{profil_id}/desactiver', response_model=schemas.ProfilMenaceRead)"
+          ],
+          "route": "PATCH /{profil_id}/desactiver",
+          "calls": [
+            "router.patch",
+            "Depends",
+            "crud.set_profil_active",
+            "HTTPException"
+          ]
+        },
+        {
+          "name": "delete_profil",
+          "signature": "async delete_profil(profil_id: int, db: AsyncSession = Depends(get_db))",
+          "description": "",
+          "line": 63,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [
+            "router.delete('/{profil_id}', status_code=204)"
+          ],
+          "route": "DELETE /{profil_id}",
+          "calls": [
+            "router.delete",
+            "Depends",
+            "HTTPException",
+            "crud.delete_profil"
+          ]
+        },
+        {
+          "name": "add_bande",
+          "signature": "async add_bande(profil_id: int, data: schemas.BandeFrequenceCreate, db: AsyncSession = Depends(get_db))",
+          "description": "",
+          "line": 69,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [
+            "router.post('/{profil_id}/bandes', response_model=schemas.BandeFrequenceRead, status_code=201)"
+          ],
+          "route": "POST /{profil_id}/bandes",
+          "calls": [
+            "router.post",
+            "Depends",
+            "HTTPException",
+            "crud.create_bande",
+            "crud.get_profil"
+          ]
+        },
+        {
+          "name": "delete_bande",
+          "signature": "async delete_bande(bande_id: int, db: AsyncSession = Depends(get_db))",
+          "description": "",
+          "line": 76,
+          "is_async": true,
+          "is_private": false,
+          "decorators": [
+            "router.delete('/bandes/{bande_id}', status_code=204)"
+          ],
+          "route": "DELETE /bandes/{bande_id}",
+          "calls": [
+            "router.delete",
+            "Depends",
+            "HTTPException",
+            "crud.delete_bande"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "api-goniometrie/app/schemas/bande.py",
+      "lang": "python",
+      "role": "pydantic-models",
+      "description": "",
+      "lines": 25,
+      "imports": [
+        "pydantic"
+      ],
+      "import_aliases": {
+        "BaseModel": "pydantic"
+      },
+      "classes": [
+        {
+          "name": "BandeFrequenceCreate",
+          "bases": [
+            "BaseModel"
+          ],
+          "description": "",
+          "line": 4,
+          "methods": []
+        },
+        {
+          "name": "BandeFrequenceRead",
+          "bases": [
+            "BandeFrequenceCreate"
+          ],
+          "description": "",
+          "line": 9,
+          "methods": []
+        },
+        {
+          "name": "BandeActiveRead",
+          "bases": [
+            "BaseModel"
+          ],
+          "description": "",
+          "line": 16,
+          "methods": []
+        }
+      ],
+      "functions": []
+    },
+    {
+      "path": "api-goniometrie/app/schemas/freq_lock.py",
+      "lang": "python",
+      "role": "pydantic-models",
+      "description": "",
+      "lines": 32,
+      "imports": [
+        "datetime",
+        "pydantic"
+      ],
+      "import_aliases": {
+        "datetime": "datetime",
+        "BaseModel": "pydantic"
+      },
+      "classes": [
+        {
+          "name": "FrequenceLockeeCreate",
+          "bases": [
+            "BaseModel"
+          ],
+          "description": "",
+          "line": 5,
+          "methods": []
+        },
+        {
+          "name": "AzimuthUpdate",
+          "bases": [
+            "BaseModel"
+          ],
+          "description": "Résultat d'un scan servo envoyé par le scanner après calcul de gisement.",
+          "line": 14,
+          "methods": []
+        },
+        {
+          "name": "FrequenceLockeeRead",
+          "bases": [
+            "FrequenceLockeeCreate"
+          ],
+          "description": "",
+          "line": 22,
+          "methods": []
+        }
+      ],
+      "functions": []
+    },
+    {
+      "path": "api-goniometrie/app/schemas/mesure.py",
+      "lang": "python",
+      "role": "pydantic-models",
+      "description": "",
+      "lines": 18,
+      "imports": [
+        "datetime",
+        "pydantic"
+      ],
+      "import_aliases": {
+        "datetime": "datetime",
+        "BaseModel": "pydantic"
+      },
+      "classes": [
+        {
+          "name": "MesureCreate",
+          "bases": [
+            "BaseModel"
+          ],
+          "description": "",
+          "line": 5,
+          "methods": []
+        },
+        {
+          "name": "MesureRead",
+          "bases": [
+            "MesureCreate"
+          ],
+          "description": "",
+          "line": 13,
+          "methods": []
+        }
+      ],
+      "functions": []
+    },
+    {
+      "path": "api-goniometrie/app/schemas/profil.py",
+      "lang": "python",
+      "role": "pydantic-models",
+      "description": "",
+      "lines": 24,
+      "imports": [
+        "datetime",
+        "pydantic",
+        "bande"
+      ],
+      "import_aliases": {
+        "datetime": "datetime",
+        "BaseModel": "pydantic",
+        "BandeFrequenceRead": "bande"
+      },
+      "classes": [
+        {
+          "name": "ProfilMenaceCreate",
+          "bases": [
+            "BaseModel"
+          ],
+          "description": "",
+          "line": 6,
+          "methods": []
+        },
+        {
+          "name": "ProfilMenaceRead",
+          "bases": [
+            "ProfilMenaceCreate"
+          ],
+          "description": "",
+          "line": 12,
+          "methods": []
+        },
+        {
+          "name": "ProfilMenacePage",
+          "bases": [
+            "BaseModel"
+          ],
+          "description": "",
+          "line": 21,
+          "methods": []
+        }
+      ],
+      "functions": []
+    },
+    {
+      "path": "api-goniometrie/app/ws_manager.py",
+      "lang": "python",
+      "role": null,
+      "description": "",
+      "lines": 27,
+      "imports": [
+        "fastapi"
+      ],
+      "import_aliases": {
+        "WebSocket": "fastapi"
+      },
+      "classes": [
+        {
+          "name": "ConnectionManager",
+          "bases": [],
+          "description": "",
+          "line": 4,
+          "methods": [
+            {
+              "name": "__init__",
+              "signature": "__init__()",
+              "description": "",
+              "line": 5,
+              "is_async": false,
+              "is_private": false,
+              "decorators": [],
+              "route": null,
+              "calls": []
+            },
+            {
+              "name": "connect",
+              "signature": "async connect(ws: WebSocket)",
+              "description": "",
+              "line": 8,
+              "is_async": true,
+              "is_private": false,
+              "decorators": [],
+              "route": null,
+              "calls": [
+                "self._connections.append",
+                "ws.accept"
+              ]
+            },
+            {
+              "name": "disconnect",
+              "signature": "disconnect(ws: WebSocket)",
+              "description": "",
+              "line": 12,
+              "is_async": false,
+              "is_private": false,
+              "decorators": [],
+              "route": null,
+              "calls": [
+                "self._connections.remove"
+              ]
+            },
+            {
+              "name": "broadcast",
+              "signature": "async broadcast(data: dict)",
+              "description": "",
+              "line": 15,
+              "is_async": true,
+              "is_private": false,
+              "decorators": [],
+              "route": null,
+              "calls": [
+                "self._connections.remove",
+                "ws.send_json",
+                "dead.append"
+              ]
+            }
+          ]
+        }
+      ],
+      "functions": []
+    },
+    {
+      "path": "api-goniometrie/requirements.txt",
+      "lang": "requirements",
+      "role": "python-deps",
+      "dependencies": [
+        "fastapi==0.115.12",
+        "uvicorn[standard]==0.34.0",
+        "sqlalchemy[asyncio]==2.0.40",
+        "asyncpg==0.30.0",
+        "alembic==1.15.2",
+        "pydantic-settings==2.8.1"
+      ]
+    },
+    {
+      "path": "front-goniometrie/package.json",
+      "lang": "json-config",
+      "role": "package-config",
+      "description": "",
+      "name": "front-goniometrie",
+      "version": "0.0.0",
+      "scripts": {
+        "dev": "vite",
+        "build": "tsc -b && vite build",
+        "lint": "eslint .",
+        "preview": "vite preview"
+      },
+      "dependencies": [
+        "@reduxjs/toolkit",
+        "@tailwindcss/vite",
+        "axios",
+        "react",
+        "react-dom",
+        "react-icons",
+        "react-redux",
+        "react-router-dom",
+        "tailwindcss"
+      ],
+      "dev_dependencies": [
+        "@eslint/js",
+        "@types/node",
+        "@types/react",
+        "@types/react-dom",
+        "@vitejs/plugin-react",
+        "eslint",
+        "eslint-plugin-react-hooks",
+        "eslint-plugin-react-refresh",
+        "globals",
+        "typescript"
+      ]
+    },
+    {
+      "path": "front-goniometrie/src/App.tsx",
+      "lang": "tsx",
+      "error": "tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript"
+    },
+    {
+      "path": "front-goniometrie/src/app/hooks.ts",
+      "lang": "ts",
+      "error": "tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript"
+    },
+    {
+      "path": "front-goniometrie/src/app/store.tsx",
+      "lang": "tsx",
+      "error": "tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript"
+    },
+    {
+      "path": "front-goniometrie/src/components/ConfirmModal.tsx",
+      "lang": "tsx",
+      "error": "tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript"
+    },
+    {
+      "path": "front-goniometrie/src/components/FreqInput.tsx",
+      "lang": "tsx",
+      "error": "tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript"
+    },
+    {
+      "path": "front-goniometrie/src/domains/axiosInstance.ts",
+      "lang": "ts",
+      "error": "tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript"
+    },
+    {
+      "path": "front-goniometrie/src/domains/freq_locks/components/FreqLockModal.tsx",
+      "lang": "tsx",
+      "error": "tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript"
+    },
+    {
+      "path": "front-goniometrie/src/domains/freq_locks/service.ts",
+      "lang": "ts",
+      "error": "tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript"
+    },
+    {
+      "path": "front-goniometrie/src/domains/freq_locks/slice.ts",
+      "lang": "ts",
+      "error": "tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript"
+    },
+    {
+      "path": "front-goniometrie/src/domains/mesures/service.ts",
+      "lang": "ts",
+      "error": "tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript"
+    },
+    {
+      "path": "front-goniometrie/src/domains/mesures/slice.ts",
+      "lang": "ts",
+      "error": "tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript"
+    },
+    {
+      "path": "front-goniometrie/src/domains/mesures/useMesuresWS.ts",
+      "lang": "ts",
+      "error": "tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript"
+    },
+    {
+      "path": "front-goniometrie/src/domains/profils/components/BandeForm.tsx",
+      "lang": "tsx",
+      "error": "tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript"
+    },
+    {
+      "path": "front-goniometrie/src/domains/profils/components/ProfilCard.tsx",
+      "lang": "tsx",
+      "error": "tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript"
+    },
+    {
+      "path": "front-goniometrie/src/domains/profils/components/ProfilForm.tsx",
+      "lang": "tsx",
+      "error": "tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript"
+    },
+    {
+      "path": "front-goniometrie/src/domains/profils/service.ts",
+      "lang": "ts",
+      "error": "tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript"
+    },
+    {
+      "path": "front-goniometrie/src/domains/profils/slice.ts",
+      "lang": "ts",
+      "error": "tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript"
+    },
+    {
+      "path": "front-goniometrie/src/main.tsx",
+      "lang": "tsx",
+      "error": "tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript"
+    },
+    {
+      "path": "front-goniometrie/src/pages/MesuresPage.tsx",
+      "lang": "tsx",
+      "error": "tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript"
+    },
+    {
+      "path": "front-goniometrie/src/pages/ProfilsPage.tsx",
+      "lang": "tsx",
+      "error": "tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript"
+    },
+    {
+      "path": "front-goniometrie/src/types/index.ts",
+      "lang": "ts",
+      "error": "tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript"
+    },
+    {
+      "path": "front-goniometrie/vite.config.ts",
+      "lang": "ts",
+      "error": "tree-sitter not available — run: pip install tree-sitter tree-sitter-typescript"
+    },
+    {
+      "path": "reduc-token/adapters/chatbot/bot.py",
+      "lang": "python",
+      "role": null,
+      "description": "bot.py — Adapter chatbot pour reduc-token.",
+      "lines": 269,
+      "imports": [
+        "__future__",
+        "hashlib",
+        "json",
+        "math",
+        "re",
+        "sys",
+        "unicodedata",
+        "pathlib",
+        "typing"
+      ],
+      "import_aliases": {
+        "annotations": "__future__",
+        "hashlib": "hashlib",
+        "json": "json",
+        "math": "math",
+        "re": "re",
+        "sys": "sys",
+        "unicodedata": "unicodedata",
+        "Path": "pathlib",
+        "Optional": "typing"
+      },
+      "classes": [
+        {
+          "name": "Chatbot",
+          "bases": [],
+          "description": "Chatbot générique reduc-token.",
+          "line": 71,
+          "methods": [
+            {
+              "name": "__init__",
+              "signature": "__init__(config_dir: Path | str = ROOT / 'config', claude_api_key: str = '', claude_model: str = _DEFAULT_CLAUDE_MODEL, system_prompt: str = 'Tu es un assistant utile et concis.')",
+              "description": "",
+              "line": 82,
+              "is_async": false,
+              "is_private": false,
+              "decorators": [],
+              "route": null,
+              "calls": [
+                "Path",
+                "self._load_json",
+                "_build_pattern",
+                "float",
+                "intents_data.get",
+                "routing.get"
+              ]
+            },
+            {
+              "name": "_load_json",
+              "signature": "_load_json(filename: str, default) -> dict",
+              "description": "",
+              "line": 104,
+              "is_async": false,
+              "is_private": true,
+              "decorators": [],
+              "route": null,
+              "calls": [
+                "f.exists",
+                "json.loads",
+                "f.read_text"
+              ]
+            },
+            {
+              "name": "_is_action",
+              "signature": "_is_action(prompt: str) -> bool",
+              "description": "",
+              "line": 115,
+              "is_async": false,
+              "is_private": true,
+              "decorators": [],
+              "route": null,
+              "calls": [
+                "get_embedding",
+                "get_redis",
+                "intent.get",
+                "r.get",
+                "_cosine",
+                "json.loads",
+                "r.setex",
+                "json.dumps",
+                "hashlib.sha256(desc.encode()).hexdigest",
+                "hashlib.sha256",
+                "desc.encode"
+              ]
+            },
+            {
+              "name": "_try_action",
+              "signature": "_try_action(prompt: str) -> Optional[str]",
+              "description": "",
+              "line": 145,
+              "is_async": false,
+              "is_private": true,
+              "decorators": [],
+              "route": null,
+              "calls": [
+                "self._is_action",
+                "load_config",
+                "config.get",
+                "classify",
+                "find_intent_config",
+                "execute",
+                "format_response"
+              ]
+            },
+            {
+              "name": "_try_local_llm",
+              "signature": "_try_local_llm(prompt: str) -> Optional[dict]",
+              "description": "",
+              "line": 174,
+              "is_async": false,
+              "is_private": true,
+              "decorators": [],
+              "route": null,
+              "calls": [
+                "ask",
+                "_normalize",
+                "self._pattern.search",
+                "result.get"
+              ]
+            },
+            {
+              "name": "_claude_fallback",
+              "signature": "_claude_fallback(prompt: str) -> str",
+              "description": "",
+              "line": 186,
+              "is_async": false,
+              "is_private": true,
+              "decorators": [],
+              "route": null,
+              "calls": [
+                "httpx.post",
+                "resp.raise_for_status",
+                "resp.json"
+              ]
+            },
+            {
+              "name": "ask",
+              "signature": "ask(message: str) -> dict",
+              "description": "Traite un message et retourne un dict :",
+              "line": 214,
+              "is_async": false,
+              "is_private": false,
+              "decorators": [],
+              "route": null,
+              "calls": [
+                "self._try_action",
+                "self._try_local_llm",
+                "self._claude_fallback",
+                "message.strip"
+              ]
+            }
+          ]
+        }
+      ],
+      "functions": [
+        {
+          "name": "_normalize",
+          "signature": "_normalize(prompt: str) -> str",
+          "description": "",
+          "line": 51,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "prompt.lower().replace(\"'\", \"'\").replace",
+            "unicodedata.normalize",
+            "''.join",
+            "re.sub",
+            "re.sub('\\\\s+', ' ', p).strip",
+            "prompt.lower().replace",
+            "prompt.lower",
+            "unicodedata.category"
+          ]
+        },
+        {
+          "name": "_build_pattern",
+          "signature": "_build_pattern(patterns: list) -> re.Pattern",
+          "description": "",
+          "line": 59,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "re.compile",
+            "re.escape",
+            "'|'.join"
+          ]
+        },
+        {
+          "name": "_cosine",
+          "signature": "_cosine(a: list, b: list) -> float",
+          "description": "",
+          "line": 64,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "sum",
+            "math.sqrt",
+            "zip"
+          ]
+        },
+        {
+          "name": "main",
+          "signature": "main() -> None",
+          "description": "",
+          "line": 239,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "argparse.ArgumentParser",
+            "parser.add_argument",
+            "parser.parse_args",
+            "Chatbot",
+            "bot.ask",
+            "{'action': 'action directe (0 token LLM)', 'local': 'LLM local (Ollama + Redis)', 'claude': f'Claude API ({bot.claude_model})'}.get",
+            "print",
+            "str",
+            "Path"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "reduc-token/adapters/claude_code/hook.py",
+      "lang": "python",
+      "role": null,
+      "description": "auto_context.py — Hook UserPromptSubmit pour reduc-token.",
+      "lines": 376,
+      "imports": [
+        "__future__",
+        "hashlib",
+        "json",
+        "math",
+        "re",
+        "subprocess",
+        "sys",
+        "unicodedata",
+        "datetime",
+        "pathlib"
+      ],
+      "import_aliases": {
+        "annotations": "__future__",
+        "hashlib": "hashlib",
+        "json": "json",
+        "math": "math",
+        "re": "re",
+        "subprocess": "subprocess",
+        "sys": "sys",
+        "unicodedata": "unicodedata",
+        "datetime": "datetime",
+        "Path": "pathlib"
+      },
+      "classes": [],
+      "functions": [
+        {
+          "name": "_load_routing_config",
+          "signature": "_load_routing_config() -> dict",
+          "description": "",
+          "line": 55,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "ROUTING_FILE.exists",
+            "json.loads",
+            "ROUTING_FILE.read_text"
+          ]
+        },
+        {
+          "name": "_build_local_llm_pattern",
+          "signature": "_build_local_llm_pattern(patterns: list) -> re.Pattern",
+          "description": "",
+          "line": 64,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "re.compile",
+            "re.escape",
+            "'|'.join"
+          ]
+        },
+        {
+          "name": "_load_project_identifiers",
+          "signature": "_load_project_identifiers() -> set[str]",
+          "description": "Charge les noms de fichiers, fonctions, classes depuis project_map.json.",
+          "line": 78,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "map_file.exists",
+            "set",
+            "json.loads",
+            "data.get",
+            "map_file.read_text",
+            "ids.add",
+            "f.get",
+            "Path(f['path']).stem.lower",
+            "cls.get",
+            "fn['name'].lower",
+            "cls['name'].lower",
+            "len",
+            "m['name'].lower",
+            "Path"
+          ]
+        },
+        {
+          "name": "_normalize",
+          "signature": "_normalize(prompt: str) -> str",
+          "description": "",
+          "line": 98,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "prompt.lower().replace(\"'\", \"'\").replace",
+            "unicodedata.normalize",
+            "''.join",
+            "re.sub",
+            "re.sub('\\\\s+', ' ', p).strip",
+            "prompt.lower().replace",
+            "prompt.lower",
+            "unicodedata.category"
+          ]
+        },
+        {
+          "name": "_route",
+          "signature": "_route(prompt: str, project_ids: set[str]) -> tuple[str, str]",
+          "description": "Retourne (route, raison).",
+          "line": 106,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "prompt.lower",
+            "set",
+            "re.search",
+            "_MISTRAL_PATTERNS.search",
+            "re.findall",
+            "Path(ext_match.group(1)).stem.lower",
+            "_normalize",
+            "Path",
+            "next",
+            "ext_match.group",
+            "iter"
+          ]
+        },
+        {
+          "name": "_log_routing",
+          "signature": "_log_routing(prompt: str, route: str, raison: str, mistral_result: dict | None = None) -> None",
+          "description": "Enregistre la décision de routing pour analyse qualité.",
+          "line": 141,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "datetime.now().isoformat",
+            "mistral_result.get",
+            "CONTEXT_DIR.mkdir",
+            "ROUTING_LOG.open",
+            "f.write",
+            "datetime.now",
+            "json.dumps"
+          ]
+        },
+        {
+          "name": "_context_is_stale",
+          "signature": "_context_is_stale() -> bool",
+          "description": "",
+          "line": 160,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "ctx_file.exists",
+            "subprocess.run",
+            "result.stdout.strip",
+            "datetime.now().timestamp",
+            "ctx_file.stat",
+            "str",
+            "datetime.now"
+          ]
+        },
+        {
+          "name": "_has_code_changes",
+          "signature": "_has_code_changes() -> bool",
+          "description": "True si des .py / .ts / .tsx ont changé (déclenche project_mapper).",
+          "line": 177,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "subprocess.run",
+            "any",
+            "str",
+            "f.endswith",
+            "result.stdout.strip().splitlines",
+            "result.stdout.strip"
+          ]
+        },
+        {
+          "name": "_update_context",
+          "signature": "_update_context(update_mapper: bool = False) -> None",
+          "description": "",
+          "line": 192,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "subprocess.run",
+            "CONTEXT_DIR.mkdir",
+            "generated.exists",
+            "str",
+            "PROJECT_DIR / 'CLAUDE.md'.write_text",
+            "generated.read_text"
+          ]
+        },
+        {
+          "name": "_load_context",
+          "signature": "_load_context() -> str",
+          "description": "",
+          "line": 213,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "session.exists",
+            "claude_md.exists",
+            "'\\n\\n---\\n\\n'.join",
+            "parts.append",
+            "claude_md.read_text",
+            "session.read_text"
+          ]
+        },
+        {
+          "name": "_is_action_prompt",
+          "signature": "_is_action_prompt(prompt: str, intents: list) -> bool",
+          "description": "Pré-filtre sémantique : vérifie si le prompt ressemble à une commande d'action.",
+          "line": 225,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "get_embedding",
+            "get_redis",
+            "intent.get",
+            "r.get",
+            "sum",
+            "math.sqrt",
+            "json.loads",
+            "r.setex",
+            "json.dumps",
+            "hashlib.sha256(desc.encode()).hexdigest",
+            "zip",
+            "hashlib.sha256",
+            "desc.encode"
+          ]
+        },
+        {
+          "name": "_try_action",
+          "signature": "_try_action(prompt: str) -> str | None",
+          "description": "Tente de classifier le prompt comme une action et l'exécute.",
+          "line": 271,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "INTENTS_FILE.exists",
+            "load_config",
+            "config.get",
+            "classify",
+            "find_intent_config",
+            "execute",
+            "format_response",
+            "_is_action_prompt"
+          ]
+        },
+        {
+          "name": "main",
+          "signature": "main() -> None",
+          "description": "",
+          "line": 310,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "_try_action",
+            "_load_project_identifiers",
+            "_route",
+            "sys.exit",
+            "json.loads",
+            "payload.get",
+            "prompt.strip",
+            "print",
+            "_log_routing",
+            "_context_is_stale",
+            "_load_context",
+            "sys.stdin.read",
+            "_normalize",
+            "ask",
+            "mistral_result.get",
+            "_has_code_changes",
+            "_update_context"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "reduc-token/adapters/claude_code/mcp/mcp_server.py",
+      "lang": "python",
+      "role": null,
+      "description": "mcp_server.py — Serveur MCP (Model Context Protocol) pour reduc-token.",
+      "lines": 551,
+      "imports": [
+        "__future__",
+        "argparse",
+        "json",
+        "subprocess",
+        "sys",
+        "pathlib",
+        "re",
+        "unicodedata"
+      ],
+      "import_aliases": {
+        "annotations": "__future__",
+        "argparse": "argparse",
+        "json": "json",
+        "subprocess": "subprocess",
+        "sys": "sys",
+        "Path": "pathlib",
+        "re": "re",
+        "unicodedata": "unicodedata"
+      },
+      "classes": [],
+      "functions": [
+        {
+          "name": "_normalize",
+          "signature": "_normalize(prompt: str) -> str",
+          "description": "Normalise une question pour maximiser les cache hits.",
+          "line": 57,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "prompt.lower",
+            "p.replace(\"'\", \"'\").replace",
+            "unicodedata.normalize",
+            "''.join",
+            "re.sub",
+            "re.sub('\\\\s+', ' ', p).strip",
+            "p.replace",
+            "unicodedata.category"
+          ]
+        },
+        {
+          "name": "_route_prompt",
+          "signature": "_route_prompt(prompt: str) -> str",
+          "description": "Retourne 'mistral' ou 'claude' selon 3 règles :",
+          "line": 79,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "_CLAUDE_PATTERNS.search",
+            "_MISTRAL_PATTERNS.search"
+          ]
+        },
+        {
+          "name": "_send",
+          "signature": "_send(obj: dict) -> None",
+          "description": "",
+          "line": 97,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "print",
+            "json.dumps"
+          ]
+        },
+        {
+          "name": "_error",
+          "signature": "_error(code: int, message: str) -> dict",
+          "description": "",
+          "line": 101,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": []
+        },
+        {
+          "name": "_run",
+          "signature": "_run(cmd: list[str], cwd: Path | None = None) -> str",
+          "description": "Exécute une commande et retourne stdout ou stderr en cas d'erreur.",
+          "line": 268,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "subprocess.run",
+            "str"
+          ]
+        },
+        {
+          "name": "handle_project_mapper",
+          "signature": "handle_project_mapper(args: dict) -> str",
+          "description": "",
+          "line": 282,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "args.get",
+            "CONTEXT_DIR.mkdir",
+            "_run",
+            "claude_md.exists",
+            "str",
+            "cmd.append",
+            "Path",
+            "claude_md.read_text",
+            "Path(project_path) / 'CLAUDE.md'.write_text",
+            "len"
+          ]
+        },
+        {
+          "name": "handle_session_summary",
+          "signature": "handle_session_summary(args: dict) -> str",
+          "description": "",
+          "line": 309,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "args.get",
+            "_run",
+            "output_file.exists",
+            "str",
+            "Path",
+            "output_file.read_text"
+          ]
+        },
+        {
+          "name": "handle_git_diff",
+          "signature": "handle_git_diff(args: dict) -> str",
+          "description": "",
+          "line": 327,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "args.get",
+            "_run",
+            "str",
+            "cmd.append",
+            "Path"
+          ]
+        },
+        {
+          "name": "handle_llm_ask",
+          "signature": "handle_llm_ask(args: dict) -> str",
+          "description": "",
+          "line": 345,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "ask",
+            "args.get"
+          ]
+        },
+        {
+          "name": "handle_llm_history",
+          "signature": "handle_llm_history(args: dict) -> str",
+          "description": "",
+          "line": 368,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "args.get",
+            "get_history",
+            "'\\n'.join",
+            "e.get('timestamp', '')[:16].replace",
+            "e.get",
+            "lines.append"
+          ]
+        },
+        {
+          "name": "handle_smart_ask",
+          "signature": "handle_smart_ask(args: dict) -> str",
+          "description": "",
+          "line": 391,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "_normalize",
+            "_route_prompt",
+            "ask"
+          ]
+        },
+        {
+          "name": "handle_llm_clear_cache",
+          "signature": "handle_llm_clear_cache(args: dict) -> str",
+          "description": "",
+          "line": 420,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "clear_cache"
+          ]
+        },
+        {
+          "name": "run_stdio",
+          "signature": "run_stdio() -> None",
+          "description": "",
+          "line": 442,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "raw_line.strip",
+            "msg.get",
+            "json.loads",
+            "_send",
+            "params.get",
+            "HANDLERS.get",
+            "_error",
+            "handler",
+            "str"
+          ]
+        },
+        {
+          "name": "run_http",
+          "signature": "run_http(port: int) -> None",
+          "description": "Mode HTTP simple pour tester les outils sans client MCP.",
+          "line": 499,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "print",
+            "HTTPServer(('0.0.0.0', port), Handler).serve_forever",
+            "int",
+            "json.loads",
+            "body.get",
+            "HANDLERS.get",
+            "json.dumps(obj, ensure_ascii=False, indent=2).encode",
+            "self.send_response",
+            "self.send_header",
+            "self.end_headers",
+            "self.wfile.write",
+            "HTTPServer",
+            "self._json",
+            "self.headers.get",
+            "self.rfile.read",
+            "handler",
+            "str",
+            "json.dumps",
+            "len"
+          ]
+        },
+        {
+          "name": "main",
+          "signature": "main() -> None",
+          "description": "",
+          "line": 538,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "argparse.ArgumentParser",
+            "parser.add_argument",
+            "parser.parse_args",
+            "run_http",
+            "run_stdio"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "reduc-token/adapters/claude_code/tools/git_diff_summary.py",
+      "lang": "python",
+      "role": null,
+      "description": "git_diff_summary.py — Transforme git diff en liste structurée lisible par Claude.",
+      "lines": 151,
+      "imports": [
+        "subprocess",
+        "sys",
+        "re",
+        "argparse",
+        "pathlib"
+      ],
+      "import_aliases": {
+        "subprocess": "subprocess",
+        "sys": "sys",
+        "re": "re",
+        "argparse": "argparse",
+        "Path": "pathlib"
+      },
+      "classes": [],
+      "functions": [
+        {
+          "name": "_git",
+          "signature": "_git(args: list[str]) -> str",
+          "description": "",
+          "line": 25,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "subprocess.check_output(['git', '-C', str(ROOT)] + args, stderr=subprocess.DEVNULL, text=True).strip",
+            "subprocess.check_output",
+            "str"
+          ]
+        },
+        {
+          "name": "parse_diff",
+          "signature": "parse_diff(raw: str) -> list[dict]",
+          "description": "Parse un git diff unifié et retourne les changements par fichier.",
+          "line": 35,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "raw.splitlines",
+            "sorted",
+            "re.match",
+            "files.items",
+            "result.append",
+            "m.group",
+            "files.setdefault",
+            "line.startswith",
+            "_extract_fn_name",
+            "files[current]['added'].add",
+            "set",
+            "files[current]['removed'].add"
+          ]
+        },
+        {
+          "name": "_extract_fn_name",
+          "signature": "_extract_fn_name(line: str) -> str | None",
+          "description": "Extrait le nom de fonction/méthode d'une ligne de code.",
+          "line": 86,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "line.strip",
+            "re.match",
+            "m.group",
+            "m.group(1).startswith"
+          ]
+        },
+        {
+          "name": "format_output",
+          "signature": "format_output(changes: list[dict], stat_only: bool = False) -> str",
+          "description": "",
+          "line": 104,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "'\\n'.join",
+            "lines.append",
+            "'  '.join"
+          ]
+        },
+        {
+          "name": "main",
+          "signature": "main() -> None",
+          "description": "",
+          "line": 123,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "argparse.ArgumentParser",
+            "parser.add_argument",
+            "parser.parse_args",
+            "parse_diff",
+            "print",
+            "_git",
+            "sys.exit",
+            "format_output"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "reduc-token/adapters/claude_code/tools/project_mapper.py",
+      "lang": "python",
+      "role": "fastapi-app",
+      "description": "project_mapper.py — Analyse un projet Python/FastAPI + TypeScript/React et génère :",
+      "lines": 1144,
+      "imports": [
+        "ast",
+        "json",
+        "os",
+        "sys",
+        "re",
+        "argparse",
+        "pathlib",
+        "datetime",
+        "typing"
+      ],
+      "import_aliases": {
+        "ast": "ast",
+        "json": "json",
+        "os": "os",
+        "sys": "sys",
+        "re": "re",
+        "argparse": "argparse",
+        "Path": "pathlib",
+        "datetime": "datetime",
+        "Optional": "typing"
+      },
+      "classes": [],
+      "functions": [
+        {
+          "name": "_get_docstring",
+          "signature": "_get_docstring(node: ast.AST) -> str",
+          "description": "",
+          "line": 62,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "ast.get_docstring",
+            "doc.strip().split",
+            "doc.strip"
+          ]
+        },
+        {
+          "name": "_format_annotation",
+          "signature": "_format_annotation(annotation) -> str",
+          "description": "",
+          "line": 70,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "ast.unparse"
+          ]
+        },
+        {
+          "name": "_extract_py_calls",
+          "signature": "_extract_py_calls(func_node) -> list[str]",
+          "description": "Extrait tous les noms de fonctions appelées dans un nœud fonction Python.",
+          "line": 79,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "ast.walk",
+            "isinstance",
+            "list",
+            "dict.fromkeys",
+            "calls.append",
+            "ast.unparse"
+          ]
+        },
+        {
+          "name": "_extract_py_import_aliases",
+          "signature": "_extract_py_import_aliases(tree) -> dict[str, str]",
+          "description": "Extrait {symbole_ou_alias: module_source} depuis les imports Python.",
+          "line": 95,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "ast.iter_child_nodes",
+            "isinstance"
+          ]
+        },
+        {
+          "name": "_get_decorators",
+          "signature": "_get_decorators(node) -> list[str]",
+          "description": "",
+          "line": 110,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "getattr",
+            "decorators.append",
+            "ast.unparse"
+          ]
+        },
+        {
+          "name": "_extract_py_function",
+          "signature": "_extract_py_function(node) -> dict",
+          "description": "",
+          "line": 120,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "enumerate",
+            "_format_annotation",
+            "_get_decorators",
+            "len",
+            "args.append",
+            "re.match",
+            "_get_docstring",
+            "isinstance",
+            "_extract_py_calls",
+            "', '.join",
+            "node.name.startswith",
+            "m.group(2).upper",
+            "m.group",
+            "ast.unparse"
+          ]
+        },
+        {
+          "name": "_extract_py_class",
+          "signature": "_extract_py_class(node: ast.ClassDef) -> dict",
+          "description": "",
+          "line": 172,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "ast.iter_child_nodes",
+            "isinstance",
+            "_get_docstring",
+            "bases.append",
+            "methods.append",
+            "ast.unparse",
+            "_extract_py_function"
+          ]
+        },
+        {
+          "name": "parse_python_file",
+          "signature": "parse_python_file(filepath: Path, root: Path) -> dict",
+          "description": "",
+          "line": 194,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "ast.iter_child_nodes",
+            "filepath.read_text",
+            "ast.parse",
+            "isinstance",
+            "str",
+            "_get_docstring",
+            "_extract_py_import_aliases",
+            "functions.append",
+            "filepath.relative_to",
+            "source.count",
+            "list",
+            "_extract_py_function",
+            "classes.append",
+            "dict.fromkeys",
+            "_extract_py_class",
+            "imports.append"
+          ]
+        },
+        {
+          "name": "_get_ts_parser",
+          "signature": "_get_ts_parser(is_tsx: bool)",
+          "description": "",
+          "line": 245,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "_ts_parser_cache.get",
+            "Language",
+            "TSParser",
+            "tsts.language_tsx",
+            "tsts.language_typescript"
+          ]
+        },
+        {
+          "name": "_extract_ts_import_aliases",
+          "signature": "_extract_ts_import_aliases(src_text: str) -> dict[str, str]",
+          "description": "Extrait {alias: chemin_import} depuis les imports TypeScript.",
+          "line": 253,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "re.finditer",
+            "m.group",
+            "m.group(1).split",
+            "item.strip",
+            "item.split(' as ')[1].strip",
+            "item.split"
+          ]
+        },
+        {
+          "name": "_extract_ts_calls_from_node",
+          "signature": "_extract_ts_calls_from_node(body_node, source: bytes) -> list[str]",
+          "description": "Extrait les call_expression depuis un nœud tree-sitter.",
+          "line": 277,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "walk",
+            "list",
+            "n.child_by_field_name",
+            "dict.fromkeys",
+            "calls.append",
+            "_node_text",
+            "fn_node.child_by_field_name"
+          ]
+        },
+        {
+          "name": "_node_text",
+          "signature": "_node_text(node, source: bytes) -> str",
+          "description": "",
+          "line": 303,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "source[node.start_byte:node.end_byte].decode"
+          ]
+        },
+        {
+          "name": "_find_jsdoc",
+          "signature": "_find_jsdoc(source: bytes, line: int) -> str",
+          "description": "Cherche un commentaire JSDoc au-dessus d'une ligne.",
+          "line": 307,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "source.split",
+            "' '.join(block).replace('/**', '').replace('*/', '').replace('*', '').strip",
+            "text.split('\\n')[0].strip",
+            "block.insert",
+            "lines[i].strip().startswith",
+            "lines[i].strip().decode",
+            "' '.join(block).replace('/**', '').replace('*/', '').replace",
+            "text.split",
+            "lines[i].strip",
+            "' '.join(block).replace('/**', '').replace",
+            "' '.join(block).replace",
+            "' '.join"
+          ]
+        },
+        {
+          "name": "_extract_ts_params",
+          "signature": "_extract_ts_params(params_node, source: bytes) -> str",
+          "description": "Extrait les paramètres d'une fonction TS.",
+          "line": 326,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "', '.join",
+            "params.append",
+            "_node_text"
+          ]
+        },
+        {
+          "name": "_walk_ts",
+          "signature": "_walk_ts(node, source: bytes, results: dict, depth: int = 0)",
+          "description": "Parcourt l'AST TypeScript et collecte fonctions/composants/interfaces/types/routes.",
+          "line": 340,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "node.child_by_field_name",
+            "_extract_ts_params",
+            "any",
+            "results['functions'].append",
+            "_walk_ts",
+            "_node_text",
+            "_node_text(ret_node, source).lstrip",
+            "_find_jsdoc",
+            "name.startswith",
+            "_extract_ts_calls_from_node",
+            "results['interfaces'].append",
+            "child.child_by_field_name",
+            "results['types'].append",
+            "val_node.child_by_field_name",
+            "results['classes'].append",
+            "name[0].isupper",
+            "results['components'].append",
+            "fields.append",
+            "_node_text(prop, source).strip",
+            "methods.append",
+            "mname.startswith"
+          ]
+        },
+        {
+          "name": "parse_ts_file",
+          "signature": "parse_ts_file(filepath: Path, root: Path) -> dict",
+          "description": "",
+          "line": 467,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "_get_ts_parser",
+            "_walk_ts",
+            "source.decode",
+            "re.findall",
+            "_extract_ts_import_aliases",
+            "re.match",
+            "filepath.read_bytes",
+            "parser.parse",
+            "list",
+            "m.group(1).replace('*', '').strip().split('\\n')[0].strip",
+            "str",
+            "dict.fromkeys",
+            "filepath.relative_to",
+            "src_text.count",
+            "filepath.stem.lower",
+            "m.group(1).replace('*', '').strip().split",
+            "filepath.stem.startswith",
+            "m.group(1).replace('*', '').strip",
+            "m.group(1).replace",
+            "m.group"
+          ]
+        },
+        {
+          "name": "parse_package_json",
+          "signature": "parse_package_json(filepath: Path, root: Path) -> dict",
+          "description": "",
+          "line": 539,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "json.loads",
+            "data.get",
+            "filepath.read_text",
+            "list",
+            "str",
+            "data.get('dependencies', {}).keys",
+            "data.get('devDependencies', {}).keys",
+            "filepath.relative_to"
+          ]
+        },
+        {
+          "name": "parse_requirements_txt",
+          "signature": "parse_requirements_txt(filepath: Path, root: Path) -> dict",
+          "description": "",
+          "line": 560,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "filepath.read_text(encoding='utf-8').splitlines",
+            "l.strip",
+            "str",
+            "filepath.read_text",
+            "filepath.relative_to",
+            "l.startswith"
+          ]
+        },
+        {
+          "name": "parse_shell_file",
+          "signature": "parse_shell_file(filepath: Path, root: Path) -> dict",
+          "description": "",
+          "line": 574,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "filepath.read_text",
+            "re.findall",
+            "re.match",
+            "m.group(1).strip",
+            "str",
+            "filepath.relative_to",
+            "m.group"
+          ]
+        },
+        {
+          "name": "_load_mtime_cache",
+          "signature": "_load_mtime_cache(root: Path) -> dict[str, float]",
+          "description": "",
+          "line": 603,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "cache_path.exists",
+            "json.loads",
+            "cache_path.read_text"
+          ]
+        },
+        {
+          "name": "_save_mtime_cache",
+          "signature": "_save_mtime_cache(root: Path, mtimes: dict[str, float]) -> None",
+          "description": "",
+          "line": 613,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "root / _CACHE_FILE.write_text",
+            "json.dumps"
+          ]
+        },
+        {
+          "name": "_load_existing_files",
+          "signature": "_load_existing_files(json_path: Path) -> dict[str, dict]",
+          "description": "Charge project_map.json existant et retourne {path: file_data}.",
+          "line": 617,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "json_path.exists",
+            "json.loads",
+            "json_path.read_text",
+            "data.get"
+          ]
+        },
+        {
+          "name": "scan_project",
+          "signature": "scan_project(root: Path, incremental: bool = False, json_path: Path | None = None) -> dict",
+          "description": "",
+          "line": 628,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "sorted",
+            "build_relations",
+            "_load_mtime_cache",
+            "_load_existing_files",
+            "root.rglob",
+            "set",
+            "filepath.suffix.lower",
+            "str",
+            "_save_mtime_cache",
+            "print",
+            "len",
+            "datetime.now().isoformat",
+            "filepath.is_file",
+            "filepath.relative_to",
+            "filepath.stat",
+            "files.append",
+            "f.get",
+            "parse_package_json",
+            "datetime.now",
+            "parse_requirements_txt",
+            "parse_python_file",
+            "parse_ts_file",
+            "parse_shell_file"
+          ]
+        },
+        {
+          "name": "_is_noisy_call",
+          "signature": "_is_noisy_call(to_fn: str) -> bool",
+          "description": "Retourne True si l'appel est du bruit (template literal, chain axios, méthode HTTP nue).",
+          "line": 717,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "re.match"
+          ]
+        },
+        {
+          "name": "build_relations",
+          "signature": "build_relations(data: dict) -> dict",
+          "description": "Construit les dépendances fichier→fichier et les appels inter-fichiers.",
+          "line": 729,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "set",
+            "stem_index.setdefault(stem, []).append",
+            "list",
+            "f.get",
+            "str",
+            "stem_index.get",
+            "aliases.items",
+            "Path",
+            "all_fns.extend",
+            "fn_index.setdefault(fn['name'], []).append",
+            "imp.startswith",
+            "Path(imp).name.split",
+            "imp.split",
+            "from_file.split",
+            "m.startswith",
+            "sorted",
+            "fn.get",
+            "stem_index.setdefault",
+            "cls.get",
+            "resolve_ts",
+            "resolve_py",
+            "deps.add",
+            "call.split",
+            "fn_index.setdefault",
+            "len"
+          ]
+        },
+        {
+          "name": "_render_relations",
+          "signature": "_render_relations(relations: dict, lines: list) -> None",
+          "description": "Ajoute la section relations dans le CLAUDE.md.",
+          "line": 833,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "relations.get",
+            "lines.append",
+            "sorted",
+            "file_deps.items",
+            "Path",
+            "', '.join"
+          ]
+        },
+        {
+          "name": "generate_claude_md_compact",
+          "signature": "generate_claude_md_compact(data: dict, output_path: Path) -> None",
+          "description": "Génère CLAUDE.md — version ultra-compacte (chargée à chaque prompt).",
+          "line": 887,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "lines.append",
+            "sorted",
+            "data.get('relations', {}).get",
+            "output_path.write_text",
+            "print",
+            "str",
+            "folders.setdefault(folder, []).append",
+            "folders.keys",
+            "'\\n'.join",
+            "f.get",
+            "data.get",
+            "file_deps.items",
+            "Path",
+            "folders.setdefault",
+            "', '.join",
+            "d.split",
+            "fn.get"
+          ]
+        },
+        {
+          "name": "generate_claude_md",
+          "signature": "generate_claude_md(data: dict, output_path: Path)",
+          "description": "",
+          "line": 950,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "header_path.exists",
+            "lines.append",
+            "sorted",
+            "_render_relations",
+            "output_path.write_text",
+            "print",
+            "str",
+            "folders.setdefault(folder, []).append",
+            "folders.keys",
+            "data.get",
+            "'\\n'.join",
+            "header_path.read_text(encoding='utf-8').rstrip",
+            "f.get",
+            "ROLE_EMOJI.get",
+            "Path",
+            "folders.setdefault",
+            "header_path.read_text",
+            "', '.join",
+            "cls.get",
+            "iface.get",
+            "fn.get",
+            "comp.get",
+            "list",
+            "m.get",
+            "scripts.keys"
+          ]
+        },
+        {
+          "name": "_run_once",
+          "signature": "_run_once(root: Path, out_dir: Path, incremental: bool = False) -> None",
+          "description": "",
+          "line": 1074,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "scan_project",
+            "print",
+            "json_path.write_text",
+            "generate_claude_md_compact",
+            "generate_claude_md",
+            "json.dumps"
+          ]
+        },
+        {
+          "name": "main",
+          "signature": "main()",
+          "description": "",
+          "line": 1091,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "argparse.ArgumentParser",
+            "parser.add_argument",
+            "parser.parse_args",
+            "Path(args.path).resolve",
+            "print",
+            "_run_once",
+            "root.exists",
+            "sys.exit",
+            "Path(args.output).resolve",
+            "json.loads",
+            "generate_claude_md_compact",
+            "generate_claude_md",
+            "Path",
+            "json_path.exists",
+            "json_path.read_text",
+            "time.sleep",
+            "datetime.now().strftime",
+            "datetime.now"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "reduc-token/adapters/claude_code/tools/session_summary.py",
+      "lang": "python",
+      "role": null,
+      "description": "session_summary.py — Résumé structuré de la session courante pour Claude Code.",
+      "lines": 168,
+      "imports": [
+        "subprocess",
+        "sys",
+        "re",
+        "argparse",
+        "pathlib",
+        "datetime"
+      ],
+      "import_aliases": {
+        "subprocess": "subprocess",
+        "sys": "sys",
+        "re": "re",
+        "argparse": "argparse",
+        "Path": "pathlib",
+        "datetime": "datetime"
+      },
+      "classes": [],
+      "functions": [
+        {
+          "name": "_git",
+          "signature": "_git(args: list[str]) -> str",
+          "description": "",
+          "line": 32,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "subprocess.check_output(['git', '-C', str(ROOT)] + args, stderr=subprocess.DEVNULL, text=True).strip",
+            "subprocess.check_output",
+            "str"
+          ]
+        },
+        {
+          "name": "_load_fn_index",
+          "signature": "_load_fn_index() -> dict[str, str]",
+          "description": "Charge project_map.json et retourne {nom_fonction: fichier}.",
+          "line": 43,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "json.loads",
+            "data.get",
+            "MAPFILE.exists",
+            "MAPFILE.read_text",
+            "f.get",
+            "cls.get"
+          ]
+        },
+        {
+          "name": "git_diff_summary",
+          "signature": "git_diff_summary(since: str = 'HEAD') -> list[dict]",
+          "description": "Retourne la liste des fichiers modifiés avec les fonctions/classes touchées.",
+          "line": 59,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "_git",
+            "raw_diff.splitlines",
+            "re.match",
+            "m.group",
+            "line.startswith",
+            "sorted",
+            "files[current_file]['fns'].add",
+            "files.items",
+            "set",
+            "m.group(1)[0].islower",
+            "m.group(1)[0].isupper",
+            "path.endswith"
+          ]
+        },
+        {
+          "name": "recent_commits",
+          "signature": "recent_commits(n: int = 5) -> list[str]",
+          "description": "",
+          "line": 108,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "_git",
+            "log.splitlines"
+          ]
+        },
+        {
+          "name": "generate_summary",
+          "signature": "generate_summary(since: str = 'HEAD', note: str = '') -> str",
+          "description": "",
+          "line": 113,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "git_diff_summary",
+            "recent_commits",
+            "_git",
+            "'\\n'.join",
+            "lines.append",
+            "status.splitlines",
+            "datetime.now().strftime",
+            "datetime.now",
+            "', '.join",
+            "line.strip"
+          ]
+        },
+        {
+          "name": "main",
+          "signature": "main() -> None",
+          "description": "",
+          "line": 151,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "argparse.ArgumentParser",
+            "parser.add_argument",
+            "parser.parse_args",
+            "generate_summary",
+            "OUTPUT.write_text",
+            "print"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "reduc-token/cache/llm_cache.py",
+      "lang": "python",
+      "role": null,
+      "description": "llm_cache.py — Interface LLM avec cache Redis à deux niveaux.",
+      "lines": 305,
+      "imports": [
+        "__future__",
+        "argparse",
+        "hashlib",
+        "json",
+        "math",
+        "sys",
+        "datetime",
+        "httpx",
+        "redis"
+      ],
+      "import_aliases": {
+        "annotations": "__future__",
+        "argparse": "argparse",
+        "hashlib": "hashlib",
+        "json": "json",
+        "math": "math",
+        "sys": "sys",
+        "datetime": "datetime",
+        "timezone": "datetime",
+        "httpx": "httpx",
+        "redis": "redis"
+      },
+      "classes": [],
+      "functions": [
+        {
+          "name": "get_redis",
+          "signature": "get_redis() -> redis.Redis",
+          "description": "",
+          "line": 47,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "redis.from_url"
+          ]
+        },
+        {
+          "name": "_prompt_hash",
+          "signature": "_prompt_hash(model: str, prompt: str) -> str",
+          "description": "",
+          "line": 51,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "hashlib.sha256(f'{model}::{prompt}'.encode()).hexdigest",
+            "hashlib.sha256",
+            "f'{model}::{prompt}'.encode"
+          ]
+        },
+        {
+          "name": "_entry_key",
+          "signature": "_entry_key(h: str) -> str",
+          "description": "",
+          "line": 55,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": []
+        },
+        {
+          "name": "_embed_key",
+          "signature": "_embed_key(h: str) -> str",
+          "description": "",
+          "line": 59,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": []
+        },
+        {
+          "name": "clear_cache",
+          "signature": "clear_cache() -> int",
+          "description": "",
+          "line": 63,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "get_redis",
+            "r.delete",
+            "len",
+            "r.keys"
+          ]
+        },
+        {
+          "name": "get_embedding",
+          "signature": "get_embedding(prompt: str) -> list[float] | None",
+          "description": "Appelle Ollama nomic-embed-text, retourne le vecteur ou None si indisponible.",
+          "line": 74,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "httpx.Client",
+            "client.post",
+            "resp.raise_for_status",
+            "resp.json().get",
+            "resp.json"
+          ]
+        },
+        {
+          "name": "_cosine_similarity",
+          "signature": "_cosine_similarity(a: list[float], b: list[float]) -> float",
+          "description": "",
+          "line": 88,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "sum",
+            "math.sqrt",
+            "zip"
+          ]
+        },
+        {
+          "name": "embed_search",
+          "signature": "embed_search(prompt: str, model: str, threshold: float = EMBED_SIMILARITY_THRESHOLD) -> dict | None",
+          "description": "Cherche dans Redis une réponse sémantiquement proche.",
+          "line": 97,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "get_embedding",
+            "get_redis",
+            "r.smembers",
+            "r.get",
+            "json.loads",
+            "_cosine_similarity",
+            "_embed_key",
+            "_entry_key",
+            "round"
+          ]
+        },
+        {
+          "name": "embed_store",
+          "signature": "embed_store(prompt: str, model: str, entry: dict) -> None",
+          "description": "Stocke le vecteur embedding + l'entrée réponse pour les recherches futures.",
+          "line": 136,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "get_embedding",
+            "_prompt_hash",
+            "get_redis",
+            "r.setex",
+            "r.sadd",
+            "_embed_key",
+            "json.dumps",
+            "_entry_key"
+          ]
+        },
+        {
+          "name": "ask_ollama",
+          "signature": "ask_ollama(prompt: str, model: str = OLLAMA_MODEL, stream: bool = True) -> tuple[str, int]",
+          "description": "Envoie un prompt à Ollama et retourne (réponse, nb_tokens).",
+          "line": 150,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "httpx.Client",
+            "print",
+            "client.stream",
+            "resp.raise_for_status",
+            "resp.iter_lines",
+            "json.loads",
+            "chunk.get"
+          ]
+        },
+        {
+          "name": "ask_online",
+          "signature": "ask_online(prompt: str, model: str = 'mistral-small-latest', api_key: str = '', api_url: str = 'https://api.mistral.ai/v1') -> tuple[str, int]",
+          "description": "Envoie un prompt à l'API Mistral cloud (ou compatible OpenAI).",
+          "line": 180,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "data.get('usage', {}).get",
+            "httpx.Client",
+            "client.post",
+            "resp.raise_for_status",
+            "resp.json",
+            "data.get"
+          ]
+        },
+        {
+          "name": "ask",
+          "signature": "ask(prompt: str, model: str = OLLAMA_MODEL, use_cache: bool = True, online: bool = False, api_key: str = '', api_url: str = 'https://api.mistral.ai/v1', online_model: str = 'mistral-small-latest', embed_threshold: float = EMBED_SIMILARITY_THRESHOLD) -> dict",
+          "description": "Pose une question au LLM avec cache Redis à deux niveaux.",
+          "line": 207,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "embed_search",
+            "ask_online",
+            "ask_ollama",
+            "datetime.now(timezone.utc).isoformat",
+            "embed_store",
+            "datetime.now"
+          ]
+        },
+        {
+          "name": "main",
+          "signature": "main() -> None",
+          "description": "",
+          "line": 259,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "argparse.ArgumentParser",
+            "parser.add_argument",
+            "parser.parse_args",
+            "ask",
+            "print",
+            "clear_cache",
+            "parser.print_help",
+            "sys.exit",
+            "result.get"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "reduc-token/core/classifier.py",
+      "lang": "python",
+      "role": null,
+      "description": "classifier.py — Classification d'intent via LLM local (Ollama JSON mode).",
+      "lines": 110,
+      "imports": [
+        "__future__",
+        "hashlib",
+        "json",
+        "pathlib",
+        "typing",
+        "httpx"
+      ],
+      "import_aliases": {
+        "annotations": "__future__",
+        "hashlib": "hashlib",
+        "json": "json",
+        "Path": "pathlib",
+        "Any": "typing",
+        "httpx": "httpx"
+      },
+      "classes": [],
+      "functions": [
+        {
+          "name": "load_intents",
+          "signature": "load_intents(config_path: Path) -> list[dict]",
+          "description": "Charge la liste des intents depuis intents.json.",
+          "line": 23,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "json.loads(config_path.read_text(encoding='utf-8')).get",
+            "config_path.exists",
+            "json.loads",
+            "config_path.read_text"
+          ]
+        },
+        {
+          "name": "load_config",
+          "signature": "load_config(config_path: Path) -> dict",
+          "description": "Charge la config complète (base_url + intents).",
+          "line": 30,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "json.loads",
+            "config_path.exists",
+            "config_path.read_text"
+          ]
+        },
+        {
+          "name": "_build_prompt",
+          "signature": "_build_prompt(message: str, intents: list[dict]) -> str",
+          "description": "",
+          "line": 37,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "'\\n'.join",
+            "i.get",
+            "lines.append",
+            "', '.join"
+          ]
+        },
+        {
+          "name": "classify",
+          "signature": "classify(message: str, intents: list[dict]) -> dict",
+          "description": "Classifie le message et extrait les entités.",
+          "line": 64,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "hashlib.md5(message.lower().strip().encode()).hexdigest",
+            "_build_prompt",
+            "hashlib.md5",
+            "httpx.Client",
+            "client.post",
+            "resp.raise_for_status",
+            "resp.json().get",
+            "json.loads",
+            "result.get",
+            "message.lower().strip().encode",
+            "resp.json",
+            "message.lower().strip",
+            "message.lower"
+          ]
+        },
+        {
+          "name": "find_intent_config",
+          "signature": "find_intent_config(intent_name: str, intents: list[dict]) -> dict | None",
+          "description": "Retrouve la config complète d'un intent par son nom.",
+          "line": 107,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "next"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "reduc-token/core/executor.py",
+      "lang": "python",
+      "role": null,
+      "description": "executor.py — Exécution d'actions HTTP depuis l'intent registry.",
+      "lines": 77,
+      "imports": [
+        "__future__",
+        "json",
+        "typing",
+        "httpx"
+      ],
+      "import_aliases": {
+        "annotations": "__future__",
+        "json": "json",
+        "Any": "typing",
+        "httpx": "httpx"
+      },
+      "classes": [],
+      "functions": [
+        {
+          "name": "_fill",
+          "signature": "_fill(template: Any, entities: dict) -> Any",
+          "description": "Remplace {entity} dans les templates string ou dict récursivement.",
+          "line": 16,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "isinstance",
+            "entities.items",
+            "template.replace",
+            "_fill",
+            "str",
+            "template.items"
+          ]
+        },
+        {
+          "name": "execute",
+          "signature": "execute(intent_config: dict, entities: dict, base_url: str = '') -> dict",
+          "description": "Exécute l'action HTTP définie dans intent_config.",
+          "line": 29,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "intent_config.get",
+            "action.get('method', 'GET').upper",
+            "_fill",
+            "action.get",
+            "httpx.Client",
+            "client.request",
+            "resp.json",
+            "str"
+          ]
+        },
+        {
+          "name": "format_response",
+          "signature": "format_response(intent_config: dict, entities: dict, result: dict) -> str",
+          "description": "Formate la réponse finale à afficher à l'utilisateur.",
+          "line": 56,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "intent_config.get",
+            "result.get",
+            "isinstance",
+            "_fill",
+            "json.dumps",
+            "merged.update"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "reduc-token/install.py",
+      "lang": "python",
+      "role": null,
+      "description": "install.py — Configure automatiquement les hooks Claude Code dans ~/.claude/settings.json.",
+      "lines": 150,
+      "imports": [
+        "__future__",
+        "argparse",
+        "json",
+        "shutil",
+        "sys",
+        "pathlib"
+      ],
+      "import_aliases": {
+        "annotations": "__future__",
+        "argparse": "argparse",
+        "json": "json",
+        "shutil": "shutil",
+        "sys": "sys",
+        "Path": "pathlib"
+      },
+      "classes": [],
+      "functions": [
+        {
+          "name": "_load_settings",
+          "signature": "_load_settings() -> dict",
+          "description": "",
+          "line": 43,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "SETTINGS_FILE.exists",
+            "json.loads",
+            "SETTINGS_FILE.read_text",
+            "print"
+          ]
+        },
+        {
+          "name": "_save_settings",
+          "signature": "_save_settings(data: dict) -> None",
+          "description": "",
+          "line": 52,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "SETTINGS_FILE.parent.mkdir",
+            "SETTINGS_FILE.write_text",
+            "json.dumps"
+          ]
+        },
+        {
+          "name": "_hook_already_installed",
+          "signature": "_hook_already_installed(hook_list: list, marker: str) -> bool",
+          "description": "Vérifie si un hook reduc-token est déjà dans la liste.",
+          "line": 57,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "entry.get",
+            "h.get"
+          ]
+        },
+        {
+          "name": "check",
+          "signature": "check() -> bool",
+          "description": "Retourne True si tous les hooks sont configurés.",
+          "line": 66,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "_load_settings",
+            "settings.get",
+            "_hook_already_installed",
+            "print",
+            "hooks.get"
+          ]
+        },
+        {
+          "name": "install",
+          "signature": "install() -> None",
+          "description": "",
+          "line": 80,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "_load_settings",
+            "settings.setdefault",
+            "HOOKS_TO_INSTALL.items",
+            "hooks.setdefault",
+            "_hook_already_installed",
+            "SETTINGS_FILE.exists",
+            "_save_settings",
+            "print",
+            "event_list.append",
+            "shutil.copy",
+            "SETTINGS_FILE.with_suffix"
+          ]
+        },
+        {
+          "name": "uninstall",
+          "signature": "uninstall() -> None",
+          "description": "",
+          "line": 104,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "_load_settings",
+            "settings.get",
+            "list",
+            "hooks.keys",
+            "_save_settings",
+            "print",
+            "len",
+            "_hook_already_installed"
+          ]
+        },
+        {
+          "name": "main",
+          "signature": "main() -> None",
+          "description": "",
+          "line": 130,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "argparse.ArgumentParser",
+            "parser.add_argument",
+            "parser.parse_args",
+            "print",
+            "check",
+            "sys.exit",
+            "uninstall",
+            "install"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "reduc-token/requirements.txt",
+      "lang": "requirements",
+      "role": "python-deps",
+      "dependencies": [
+        "redis>=5.0",
+        "httpx>=0.27"
+      ]
+    },
+    {
+      "path": "sdr-scanner/gisement.py",
+      "lang": "python",
+      "role": null,
+      "description": "gisement.py — Pipeline de calcul de gisement radiogoniométrique.",
+      "lines": 140,
+      "imports": [
+        "__future__",
+        "typing",
+        "numpy",
+        "scipy.signal"
+      ],
+      "import_aliases": {
+        "annotations": "__future__",
+        "TypedDict": "typing",
+        "np": "numpy",
+        "find_peaks": "scipy.signal",
+        "savgol_filter": "scipy.signal"
+      },
+      "classes": [
+        {
+          "name": "PointScan",
+          "bases": [
+            "TypedDict"
+          ],
+          "description": "",
+          "line": 17,
+          "methods": []
+        },
+        {
+          "name": "ResultatGisement",
+          "bases": [
+            "TypedDict"
+          ],
+          "description": "",
+          "line": 22,
+          "methods": []
+        },
+        {
+          "name": "GisementCalculator",
+          "bases": [],
+          "description": "Calcule le gisement RF à partir d'un scan azimutal Vivaldi (-90° à +90°).",
+          "line": 31,
+          "methods": [
+            {
+              "name": "__init__",
+              "signature": "__init__(snr_threshold_db: float = 10.0, smoothing_window: int = 7, smoothing_poly: int = 3, min_points: int = 10, cap_deg: float = 0.0) -> None",
+              "description": "",
+              "line": 43,
+              "is_async": false,
+              "is_private": false,
+              "decorators": [],
+              "route": null,
+              "calls": [
+                "ValueError"
+              ]
+            },
+            {
+              "name": "add_point",
+              "signature": "add_point(angle: float, puissance_db: float, snr_db: float) -> ResultatGisement | None",
+              "description": "Ajoute un point au buffer. Retourne un résultat partiel si buffer >= min_points.",
+              "line": 63,
+              "is_async": false,
+              "is_private": false,
+              "decorators": [],
+              "route": null,
+              "calls": [
+                "self._buffer.append",
+                "self.compute",
+                "PointScan",
+                "len"
+              ]
+            },
+            {
+              "name": "compute",
+              "signature": "compute(points: list[PointScan] | None = None) -> ResultatGisement | None",
+              "description": "Pipeline complet : lissage → masque SNR → pic → barycentre linéaire → azimuth.",
+              "line": 70,
+              "is_async": false,
+              "is_private": false,
+              "decorators": [],
+              "route": null,
+              "calls": [
+                "len",
+                "np.array",
+                "np.where",
+                "find_peaks",
+                "float",
+                "powers_w_lin.sum",
+                "round",
+                "ResultatGisement",
+                "savgol_filter",
+                "powers.copy",
+                "snr_mask.any",
+                "int",
+                "np.percentile",
+                "window_mask.any",
+                "min",
+                "np.argmax",
+                "np.isfinite",
+                "np.dot",
+                "snr_mask.sum"
+              ]
+            },
+            {
+              "name": "reset",
+              "signature": "reset() -> None",
+              "description": "Vide le buffer pour un nouveau scan.",
+              "line": 137,
+              "is_async": false,
+              "is_private": false,
+              "decorators": [],
+              "route": null,
+              "calls": [
+                "self._buffer.clear"
+              ]
+            }
+          ]
+        }
+      ],
+      "functions": []
+    },
+    {
+      "path": "sdr-scanner/hackrf_device.py",
+      "lang": "python",
+      "role": null,
+      "description": "Initialisation et contrôle du HackRF Pro via SoapySDR.",
+      "lines": 200,
+      "imports": [
+        "logging",
+        "time",
+        "SoapySDR"
+      ],
+      "import_aliases": {
+        "logging": "logging",
+        "time": "time",
+        "SoapySDR": "SoapySDR",
+        "SOAPY_SDR_RX": "SoapySDR",
+        "SOAPY_SDR_CF32": "SoapySDR"
+      },
+      "classes": [
+        {
+          "name": "HackRFDevice",
+          "bases": [],
+          "description": "",
+          "line": 14,
+          "methods": [
+            {
+              "name": "__init__",
+              "signature": "__init__(cfg: dict)",
+              "description": "",
+              "line": 15,
+              "is_async": false,
+              "is_private": false,
+              "decorators": [],
+              "route": null,
+              "calls": []
+            },
+            {
+              "name": "open",
+              "signature": "open(retries: int = 4, retry_delay: float = 2.0)",
+              "description": "Détecte et ouvre le premier HackRF disponible.",
+              "line": 25,
+              "is_async": false,
+              "is_private": false,
+              "decorators": [],
+              "route": null,
+              "calls": [
+                "range",
+                "SoapySDR.Device.enumerate",
+                "RuntimeError",
+                "SoapySDR.Device",
+                "self._apply_config",
+                "logger.info",
+                "logger.warning",
+                "time.sleep"
+              ]
+            },
+            {
+              "name": "reopen",
+              "signature": "reopen()",
+              "description": "Détruit et recrée l'objet SoapySDR (reset logiciel de l'état USB libhackrf).",
+              "line": 47,
+              "is_async": false,
+              "is_private": false,
+              "decorators": [],
+              "route": null,
+              "calls": [
+                "logger.warning",
+                "time.sleep",
+                "self.open"
+              ]
+            },
+            {
+              "name": "_apply_config",
+              "signature": "_apply_config()",
+              "description": "",
+              "line": 60,
+              "is_async": false,
+              "is_private": true,
+              "decorators": [],
+              "route": null,
+              "calls": [
+                "sdr.setSampleRate",
+                "sdr.setBandwidth",
+                "sdr.setFrequency",
+                "float",
+                "sdr.setGain",
+                "logger.info"
+              ]
+            },
+            {
+              "name": "close",
+              "signature": "close()",
+              "description": "",
+              "line": 80,
+              "is_async": false,
+              "is_private": false,
+              "decorators": [],
+              "route": null,
+              "calls": [
+                "logger.info"
+              ]
+            },
+            {
+              "name": "retune",
+              "signature": "retune(center_freq_hz: float, sample_rate_hz: float, bandwidth_hz: float, settle_ms: int = 120)",
+              "description": "Change la fréquence (et SR/BW si nécessaire).",
+              "line": 90,
+              "is_async": false,
+              "is_private": false,
+              "decorators": [],
+              "route": null,
+              "calls": [
+                "logger.debug",
+                "float",
+                "self._sdr.setFrequency",
+                "time.sleep",
+                "self._sdr.setupStream",
+                "self._sdr.activateStream",
+                "self._flush_stream",
+                "self.reopen",
+                "self._sdr.setSampleRate",
+                "self._sdr.setBandwidth",
+                "IOError"
+              ]
+            },
+            {
+              "name": "_flush_stream",
+              "signature": "_flush_stream(duration_sec: float = 0.05)",
+              "description": "Vide le buffer SDR pendant duration_sec.",
+              "line": 137,
+              "is_async": false,
+              "is_private": true,
+              "decorators": [],
+              "route": null,
+              "calls": [
+                "np.zeros",
+                "time.monotonic",
+                "self._sdr.readStream",
+                "IOError",
+                "SoapySDR.errToStr"
+              ]
+            },
+            {
+              "name": "drain",
+              "signature": "drain(duration_sec: float, should_stop = None)",
+              "description": "Lit et jette les échantillons pendant duration_sec.",
+              "line": 152,
+              "is_async": false,
+              "is_private": false,
+              "decorators": [],
+              "route": null,
+              "calls": [
+                "np.zeros",
+                "time.sleep",
+                "time.monotonic",
+                "self._sdr.readStream",
+                "IOError",
+                "should_stop",
+                "SoapySDR.errToStr"
+              ]
+            },
+            {
+              "name": "read_samples",
+              "signature": "read_samples(n_samples: int, max_retries: int = 5)",
+              "description": "Lit n_samples échantillons IQ. Gère OVERFLOW/TIMEOUT.",
+              "line": 175,
+              "is_async": false,
+              "is_private": false,
+              "decorators": [],
+              "route": null,
+              "calls": [
+                "np.zeros",
+                "range",
+                "IOError",
+                "self._sdr.readStream",
+                "logger.debug",
+                "SoapySDR.errToStr"
+              ]
+            },
+            {
+              "name": "__enter__",
+              "signature": "__enter__()",
+              "description": "",
+              "line": 194,
+              "is_async": false,
+              "is_private": false,
+              "decorators": [],
+              "route": null,
+              "calls": [
+                "self.open"
+              ]
+            },
+            {
+              "name": "__exit__",
+              "signature": "__exit__(*_)",
+              "description": "",
+              "line": 198,
+              "is_async": false,
+              "is_private": false,
+              "decorators": [],
+              "route": null,
+              "calls": [
+                "self.close"
+              ]
+            }
+          ]
+        }
+      ],
+      "functions": []
+    },
+    {
+      "path": "sdr-scanner/requirements.txt",
+      "lang": "requirements",
+      "role": "python-deps",
+      "dependencies": [
+        "numpy>=1.26",
+        "scipy>=1.12",
+        "httpx>=0.27"
+      ]
+    },
+    {
+      "path": "sdr-scanner/run_scanner.sh",
+      "lang": "shell",
+      "description": "Watchdog : relance scanner.py automatiquement si crash (segfault natif libhackrf).",
+      "sections": [],
+      "functions": []
+    },
+    {
+      "path": "sdr-scanner/scanner.py",
+      "lang": "python",
+      "role": null,
+      "description": "Scanner SDR — HackRF Pro",
+      "lines": 420,
+      "imports": [
+        "argparse",
+        "json",
+        "logging",
+        "signal",
+        "sys",
+        "time",
+        "pathlib",
+        "httpx",
+        "hackrf_device",
+        "signal_processor",
+        "gisement",
+        "simulateur"
+      ],
+      "import_aliases": {
+        "argparse": "argparse",
+        "json": "json",
+        "logging": "logging",
+        "signal": "signal",
+        "sys": "sys",
+        "time": "time",
+        "Path": "pathlib",
+        "httpx": "httpx",
+        "HackRFDevice": "hackrf_device",
+        "integrate_power": "signal_processor",
+        "peak_info": "signal_processor",
+        "GisementCalculator": "gisement",
+        "GonioSimulator": "simulateur"
+      },
+      "classes": [],
+      "functions": [
+        {
+          "name": "_sigint_handler",
+          "signature": "_sigint_handler(sig, frame)",
+          "description": "",
+          "line": 44,
+          "is_async": false,
+          "is_private": true,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "logger.info"
+          ]
+        },
+        {
+          "name": "load_config",
+          "signature": "load_config(path: str) -> dict",
+          "description": "",
+          "line": 53,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "Path",
+            "logger.info",
+            "cfg_path.exists",
+            "FileNotFoundError",
+            "cfg_path.open",
+            "json.load"
+          ]
+        },
+        {
+          "name": "fetch_lock_actif",
+          "signature": "fetch_lock_actif(api_url: str) -> dict | None",
+          "description": "Retourne le lock de fréquence actif, ou None si aucun.",
+          "line": 63,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "httpx.get",
+            "resp.json",
+            "logger.warning",
+            "logger.info",
+            "lock.get"
+          ]
+        },
+        {
+          "name": "bandes_from_lock",
+          "signature": "bandes_from_lock(lock: dict, cfg: dict) -> list[dict]",
+          "description": "Construit une bande de scan depuis un lock de fréquence.",
+          "line": 78,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "lock.get",
+            "raw.lstrip('LOCK:').strip",
+            "raw.lstrip"
+          ]
+        },
+        {
+          "name": "fetch_bandes_actives",
+          "signature": "fetch_bandes_actives(api_url: str) -> list[dict]",
+          "description": "Récupère les bandes des profils actifs depuis l'API.",
+          "line": 93,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "httpx.get",
+            "resp.raise_for_status",
+            "resp.json",
+            "logger.info",
+            "logger.warning",
+            "len"
+          ]
+        },
+        {
+          "name": "bandes_from_config",
+          "signature": "bandes_from_config(cfg: dict) -> list[dict]",
+          "description": "Construit une liste de bandes depuis config.json (fallback sans profil API).",
+          "line": 107,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": []
+        },
+        {
+          "name": "post_result",
+          "signature": "post_result(api_url: str, payload: dict)",
+          "description": "Envoie une mesure à svc-gonio.",
+          "line": 120,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "httpx.post",
+            "resp.raise_for_status",
+            "logger.debug",
+            "resp.json().get",
+            "logger.warning",
+            "resp.json"
+          ]
+        },
+        {
+          "name": "post_azimuth",
+          "signature": "post_azimuth(api_url: str, lock_id: int, result: dict)",
+          "description": "Envoie le résultat de gisement à svc-gonio.",
+          "line": 130,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "httpx.patch",
+            "resp.raise_for_status",
+            "logger.info",
+            "logger.warning"
+          ]
+        },
+        {
+          "name": "move_servo",
+          "signature": "move_servo(angle_deg: float, cfg: dict) -> None",
+          "description": "Déplace le servo DS3218MG à l'angle donné.",
+          "line": 150,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": []
+        },
+        {
+          "name": "scan_at_angle",
+          "signature": "scan_at_angle(dev: 'HackRFDevice', angle_deg: float, bande: dict, fft_size: int, integration_count: int, cfg: dict) -> dict",
+          "description": "Positionne le servo et lit la puissance à la fréquence lockée.",
+          "line": 158,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "move_servo",
+            "cfg.get('servo', {}).get",
+            "time.sleep",
+            "scan_bande",
+            "cfg.get"
+          ]
+        },
+        {
+          "name": "run_gisement_scan",
+          "signature": "run_gisement_scan(dev: 'HackRFDevice', lock: dict, cfg: dict, api_url: str, simulate: bool = False) -> None",
+          "description": "Scan servo complet sur la fréquence lockée → calcul azimuth → PATCH le lock.",
+          "line": 178,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "cfg.get",
+            "servo_cfg.get",
+            "logger.info",
+            "GisementCalculator",
+            "calc.compute",
+            "angles.append",
+            "len",
+            "GonioSimulator",
+            "logger.warning",
+            "post_azimuth",
+            "round",
+            "sim.generate_step",
+            "bandes_from_lock",
+            "scan_cfg.get",
+            "scan_at_angle",
+            "points.append",
+            "logger.debug"
+          ]
+        },
+        {
+          "name": "scan_bande",
+          "signature": "scan_bande(dev: HackRFDevice, bande: dict, fft_size: int, integration_count: int) -> dict",
+          "description": "Retune le HackRF sur la bande, acquiert et retourne le résultat.",
+          "line": 253,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "dev.retune",
+            "integrate_power",
+            "peak_info",
+            "dev.read_samples",
+            "range"
+          ]
+        },
+        {
+          "name": "run",
+          "signature": "run(cfg: dict, send_to_api: bool, simulate: bool = False)",
+          "description": "",
+          "line": 267,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "scan_cfg.get",
+            "logger.info",
+            "HackRFDevice",
+            "time.monotonic",
+            "max",
+            "fetch_lock_actif",
+            "bandes_from_config",
+            "logger.warning",
+            "dev.drain",
+            "bandes_from_lock",
+            "fetch_bandes_actives",
+            "scan_bande",
+            "logger.debug",
+            "logger.error",
+            "RuntimeError",
+            "dev.reopen",
+            "run_gisement_scan",
+            "str",
+            "post_result",
+            "time.sleep",
+            "band_failures.get"
+          ]
+        },
+        {
+          "name": "main",
+          "signature": "main()",
+          "description": "",
+          "line": 407,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "argparse.ArgumentParser",
+            "parser.add_argument",
+            "parser.parse_args",
+            "load_config",
+            "run"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "sdr-scanner/setup.sh",
+      "lang": "shell",
+      "description": "",
+      "sections": [],
+      "functions": []
+    },
+    {
+      "path": "sdr-scanner/signal_processor.py",
+      "lang": "python",
+      "role": null,
+      "description": "Traitement du signal : FFT, calcul de puissance, pic de fréquence.",
+      "lines": 93,
+      "imports": [
+        "numpy"
+      ],
+      "import_aliases": {
+        "np": "numpy"
+      },
+      "classes": [],
+      "functions": [
+        {
+          "name": "compute_fft",
+          "signature": "compute_fft(samples: np.ndarray, fft_size: int, sample_rate: float, center_freq: float) -> tuple[np.ndarray, np.ndarray]",
+          "description": "Retourne (freqs_hz, power_db) pour un bloc d'échantillons IQ.",
+          "line": 7,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "np.hanning",
+            "np.fft.fftshift",
+            "len",
+            "np.pad",
+            "np.fft.fft",
+            "np.log10",
+            "np.fft.fftfreq",
+            "np.abs"
+          ]
+        },
+        {
+          "name": "integrate_power",
+          "signature": "integrate_power(samples_list: list[np.ndarray], fft_size: int, sample_rate: float, center_freq: float) -> tuple[np.ndarray, np.ndarray]",
+          "description": "Moyenne de puissance sur plusieurs blocs (réduction du bruit).",
+          "line": 37,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "np.zeros",
+            "compute_fft",
+            "np.log10",
+            "len"
+          ]
+        },
+        {
+          "name": "peak_info",
+          "signature": "peak_info(freqs: np.ndarray, power_db: np.ndarray, dc_guard_bins: int = 8, noise_percentile: int = 20) -> dict",
+          "description": "Retourne le pic avec le meilleur SNR (puissance - plancher de bruit).",
+          "line": 61,
+          "is_async": false,
+          "is_private": false,
+          "decorators": [],
+          "route": null,
+          "calls": [
+            "float",
+            "snr.copy",
+            "int",
+            "np.percentile",
+            "len",
+            "np.argmax"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "sdr-scanner/simulateur.py",
+      "lang": "python",
+      "role": null,
+      "description": "simulateur.py — Simulateur de scan Vivaldi pour tests sans hardware.",
+      "lines": 94,
+      "imports": [
+        "__future__",
+        "math",
+        "random",
+        "typing",
+        "numpy"
+      ],
+      "import_aliases": {
+        "annotations": "__future__",
+        "math": "math",
+        "random": "random",
+        "TypedDict": "typing",
+        "np": "numpy"
+      },
+      "classes": [
+        {
+          "name": "PointScan",
+          "bases": [
+            "TypedDict"
+          ],
+          "description": "",
+          "line": 17,
+          "methods": []
+        },
+        {
+          "name": "GonioSimulator",
+          "bases": [],
+          "description": "Simule un scan servo Vivaldi sans HackRF ni servo réel.",
+          "line": 23,
+          "methods": [
+            {
+              "name": "__init__",
+              "signature": "__init__(true_angle_deg: float = 0.0, source_power_dbfs: float = -20.0, lobe_width_deg: float = 50.0, front_back_ratio_db: float = 18.0, noise_std_db: float = 2.0, step_deg: float = 2.0) -> None",
+              "description": "",
+              "line": 39,
+              "is_async": false,
+              "is_private": false,
+              "decorators": [],
+              "route": null,
+              "calls": [
+                "self._compute_noise_floor",
+                "math.sqrt",
+                "math.log"
+              ]
+            },
+            {
+              "name": "generate_scan",
+              "signature": "generate_scan(seed: int | None = None) -> list[PointScan]",
+              "description": "Scan complet -90° à +90°, noise floor par percentile 20.",
+              "line": 59,
+              "is_async": false,
+              "is_private": false,
+              "decorators": [],
+              "route": null,
+              "calls": [
+                "random.Random",
+                "self._angles",
+                "float",
+                "self._power",
+                "np.percentile",
+                "self._point",
+                "zip",
+                "rng.gauss"
+              ]
+            },
+            {
+              "name": "generate_step",
+              "signature": "generate_step(angle: float) -> PointScan",
+              "description": "Un seul point pour simulation pas à pas (temps réel).",
+              "line": 67,
+              "is_async": false,
+              "is_private": false,
+              "decorators": [],
+              "route": null,
+              "calls": [
+                "self._point",
+                "self._power",
+                "random.gauss"
+              ]
+            },
+            {
+              "name": "_angles",
+              "signature": "_angles() -> list[float]",
+              "description": "",
+              "line": 72,
+              "is_async": false,
+              "is_private": true,
+              "decorators": [],
+              "route": null,
+              "calls": [
+                "angles.append",
+                "round"
+              ]
+            },
+            {
+              "name": "_gain_db",
+              "signature": "_gain_db(delta: float) -> float",
+              "description": "",
+              "line": 79,
+              "is_async": false,
+              "is_private": true,
+              "decorators": [],
+              "route": null,
+              "calls": [
+                "math.exp",
+                "math.log10",
+                "max",
+                "abs"
+              ]
+            },
+            {
+              "name": "_power",
+              "signature": "_power(scan_angle: float) -> float",
+              "description": "",
+              "line": 85,
+              "is_async": false,
+              "is_private": true,
+              "decorators": [],
+              "route": null,
+              "calls": [
+                "self._gain_db"
+              ]
+            },
+            {
+              "name": "_compute_noise_floor",
+              "signature": "_compute_noise_floor() -> float",
+              "description": "",
+              "line": 88,
+              "is_async": false,
+              "is_private": true,
+              "decorators": [],
+              "route": null,
+              "calls": [
+                "float",
+                "np.percentile",
+                "self._power",
+                "self._angles"
+              ]
+            },
+            {
+              "name": "_point",
+              "signature": "_point(angle: float, power_db: float, noise_floor: float) -> PointScan",
+              "description": "",
+              "line": 92,
+              "is_async": false,
+              "is_private": true,
+              "decorators": [
+                "staticmethod"
+              ],
+              "route": null,
+              "calls": [
+                "PointScan",
+                "round"
+              ]
+            }
+          ]
+        }
+      ],
+      "functions": []
+    }
+  ],
+  "relations": {
+    "file_deps": {
+      "api-goniometrie/app/database.py": [
+        "api-goniometrie/app/config.py"
+      ],
+      "api-goniometrie/app/dependencies.py": [
+        "api-goniometrie/app/database.py"
+      ],
+      "api-goniometrie/app/main.py": [
+        "api-goniometrie/app/config.py",
+        "api-goniometrie/app/database.py"
+      ],
+      "api-goniometrie/app/models/bande_frequence.py": [
+        "api-goniometrie/app/database.py"
+      ],
+      "api-goniometrie/app/models/freq_lock.py": [
+        "api-goniometrie/app/database.py"
+      ],
+      "api-goniometrie/app/models/mesure.py": [
+        "api-goniometrie/app/database.py"
+      ],
+      "api-goniometrie/app/models/profil_menace.py": [
+        "api-goniometrie/app/database.py"
+      ],
+      "api-goniometrie/app/routers/freq_locks.py": [
+        "api-goniometrie/app/dependencies.py"
+      ],
+      "api-goniometrie/app/routers/mesures.py": [
+        "api-goniometrie/app/dependencies.py",
+        "api-goniometrie/app/ws_manager.py"
+      ],
+      "api-goniometrie/app/routers/profils.py": [
+        "api-goniometrie/app/dependencies.py"
+      ],
+      "api-goniometrie/app/schemas/profil.py": [
+        "api-goniometrie/app/schemas/bande.py"
+      ],
+      "sdr-scanner/scanner.py": [
+        "sdr-scanner/gisement.py",
+        "sdr-scanner/hackrf_device.py",
+        "sdr-scanner/signal_processor.py",
+        "sdr-scanner/simulateur.py"
+      ]
+    },
+    "fn_calls": [
+      {
+        "from_file": "api-goniometrie/app/dependencies.py",
+        "from_fn": "get_db",
+        "to_file": "api-goniometrie/app/database.py",
+        "to_fn": "AsyncSessionLocal"
+      },
+      {
+        "from_file": "api-goniometrie/app/main.py",
+        "from_fn": "lifespan",
+        "to_file": "api-goniometrie/app/database.py",
+        "to_fn": "begin"
+      },
+      {
+        "from_file": "api-goniometrie/app/routers/mesures.py",
+        "from_fn": "mesures_ws",
+        "to_file": "api-goniometrie/app/ws_manager.py",
+        "to_fn": "connect"
+      },
+      {
+        "from_file": "api-goniometrie/app/routers/mesures.py",
+        "from_fn": "mesures_ws",
+        "to_file": "api-goniometrie/app/ws_manager.py",
+        "to_fn": "disconnect"
+      },
+      {
+        "from_file": "api-goniometrie/app/routers/mesures.py",
+        "from_fn": "create_mesure",
+        "to_file": "api-goniometrie/app/ws_manager.py",
+        "to_fn": "broadcast"
+      },
+      {
+        "from_file": "api-goniometrie/app/routers/mesures.py",
+        "from_fn": "clear_mesures",
+        "to_file": "api-goniometrie/app/ws_manager.py",
+        "to_fn": "broadcast"
+      },
+      {
+        "from_file": "sdr-scanner/scanner.py",
+        "from_fn": "run_gisement_scan",
+        "to_file": "sdr-scanner/gisement.py",
+        "to_fn": "GisementCalculator"
+      },
+      {
+        "from_file": "sdr-scanner/scanner.py",
+        "from_fn": "run_gisement_scan",
+        "to_file": "sdr-scanner/simulateur.py",
+        "to_fn": "GonioSimulator"
+      },
+      {
+        "from_file": "sdr-scanner/scanner.py",
+        "from_fn": "scan_bande",
+        "to_file": "sdr-scanner/signal_processor.py",
+        "to_fn": "integrate_power"
+      },
+      {
+        "from_file": "sdr-scanner/scanner.py",
+        "from_fn": "scan_bande",
+        "to_file": "sdr-scanner/signal_processor.py",
+        "to_fn": "peak_info"
+      },
+      {
+        "from_file": "sdr-scanner/scanner.py",
+        "from_fn": "run",
+        "to_file": "sdr-scanner/hackrf_device.py",
+        "to_fn": "HackRFDevice"
+      }
+    ]
+  }
+}
